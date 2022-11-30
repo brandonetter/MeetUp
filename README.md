@@ -2,8 +2,9 @@
 # Poor Attempt At A Website Clone (meetup)
 
 ## Database Schema Design
+### WIP
 
-`<insert database schema design here>`
+![WIP](./db_so_far.png?raw=true "WIP Schema")
 
 ## API Documentation
 
