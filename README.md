@@ -453,7 +453,7 @@ Create and return a new image for a group specified by id.
 * Require proper authorization: Current User must be the organizer for the group
 * Request
   * Method: POST
-  * URL: /apiv1/groups/:group_id/image
+  * URL: /apiv1/groups/:group_id/images
   * Headers:
     * Content-Type: application/json
   * Body:
