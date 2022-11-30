@@ -819,7 +819,7 @@ Returns all the events.
 * Require Authentication: false
 * Request
   * Method: GET
-  * URL: /apiv1/events
+  * URL: /apiv1/events/all
   * Body: none
 
 * Successful Response
