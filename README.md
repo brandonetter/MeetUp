@@ -2,7 +2,6 @@
 # Poor Attempt At A Website Clone (meetup)
 
 ## Database Schema Design
-### WIP
 
 ![WIP](./db_so_far.png?raw=true "WIP Schema")
 
