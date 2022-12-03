@@ -3,13 +3,14 @@
 
 ## Database Schema Design
 
-![WIP](./db_so_far.png?raw=true "WIP Schema")
+![WIP](https://user-images.githubusercontent.com/4108484/205449922-f89a24a7-ae2a-47b6-8016-a418a713f0bc.png)
 
 ## API Documentation
 
 ## USER AUTHENTICATION/AUTHORIZATION
 
 ### All endpoints that require authentication
+
 
 All endpoints that require a current user to be logged in.
 
