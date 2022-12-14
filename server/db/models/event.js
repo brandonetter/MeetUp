@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Event extends Model {
     /**
@@ -13,20 +11,63 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Event.init({
-    groupId: DataTypes.INTEGER,
-    venueId: DataTypes.INTEGER,
-    description: DataTypes.STRING,
-    capacity: DataTypes.INTEGER,
-    price: DataTypes.DOUBLE,
-    name: DataTypes.STRING,
-    type: DataTypes.STRING,
-    startDate: DataTypes.DATE,
-    endDate: DataTypes.DATE,
-    numAttending: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Event',
-  });
+  Event.init(
+    {
+      groupId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {},
+      },
+      venueId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {},
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {},
+      },
+      capacity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {},
+      },
+      price: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+        validate: {},
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {},
+      },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {},
+      },
+      startDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {},
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {},
+      },
+      numAttending: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {},
+      },
+    },
+    {
+      sequelize,
+      modelName: "Event",
+    }
+  );
   return Event;
 };
