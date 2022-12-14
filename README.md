@@ -7,7 +7,15 @@
 
 ## API Documentation
 
-## USER AUTHENTICATION/AUTHORIZATION
+1. [User Authentication](#user)
+2. [Groups](#groups)
+3. [Venues](#venues)
+4. [Events](#events)
+5. [Memberships](#memberships)
+6. [Attendees](#attendees)
+7. [Images](#images)
+
+## <a id="user"></a>USER AUTHENTICATION/AUTHORIZATION
 
 ### All endpoints that require authentication
 
