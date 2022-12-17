@@ -13,19 +13,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   Image.init(
     {
-      type: {
-        type: DataTypes.STRING,
+      preview: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         validate: {},
       },
       groupId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         validate: {},
       },
       eventId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         validate: {},
       },
       url: {
