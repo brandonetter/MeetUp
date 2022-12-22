@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "cd server && nodemon app.js"
+    "dev": "cd server && nodemon app.js",
+    "start": "cd server && node app.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
