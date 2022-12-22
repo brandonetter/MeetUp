@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "cd server && nodemon app.js",
     "start": "cd server && node app.js",
-    "install": "npm install & npx sequelize db:migrate"
+    "install": "npm install && npx sequelize db:migrate"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
