@@ -79,6 +79,11 @@ module.exports = (sequelize, DataTypes) => {
     }
     async getAllGroups() {
       let groups = await this.getGroups();
+      groups = await Promise.all(
+        groups.map(async (x) => {
+          return await x.includePreview();
+        })
+      );
       groups = groups
         .filter((x) => {
           return x.UserGroup.dataValues.status != "pending";

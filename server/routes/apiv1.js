@@ -2,7 +2,7 @@ const e = require("express");
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { User, Group, Tools: t, Image } = require("../db/models");
+const { User, Group, Tools: t, Image, Venue, Event } = require("../db/models");
 
 async function authMiddle(req, res, next) {
   const authHeader = req?.cookies?.authorized || null;
@@ -73,6 +73,11 @@ router.put("*", authMiddle);
 router.get("/groups/all", async (req, res) => {
   try {
     let groups = await Group.findAll();
+    groups = await Promise.all(
+      groups.map(async (x) => {
+        return await x.includePreview();
+      })
+    );
     res.json({ Groups: groups });
   } catch (e) {
     res.json(e);
@@ -81,6 +86,7 @@ router.get("/groups/all", async (req, res) => {
 router.get("/groups", authMiddle, async (req, res) => {
   try {
     let groups = await req.userObject.getAllGroups();
+
     res.json(groups);
   } catch (e) {
     res.json(e);
@@ -88,13 +94,14 @@ router.get("/groups", authMiddle, async (req, res) => {
 });
 router.get("/groups/:group_id", async (req, res) => {
   try {
-    let groupReq = await Group.findOne({
+    let group = await Group.findOne({
       where: {
         id: req.params.group_id,
       },
     });
-    await groupReq.addOrganizer();
-    res.json(groupReq);
+    await group.includeImages();
+    await group.addOrganizer();
+    res.json(group);
   } catch (e) {
     res.statusCode = 404;
     res.json({ message: "Group couldn't be found", statusCode: 404 });
@@ -124,15 +131,124 @@ router.post("/groups/:group_id/images", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
-router.put("/groups/:group_id", (req, res) => {});
-router.delete("/groups/:group_id", (req, res) => {});
-router.get("/groups/:group_id/venues", (req, res) => {});
-router.post("/groups/:group_id/venues", (req, res) => {});
+router.put("/groups/:group_id", authMiddle, async (req, res) => {
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
+    });
+    if (!group) {
+      res.statusCode = 404;
+      throw {
+        message: "Group couldn't be found",
+        statusCode: 404,
+      };
+    }
+    let ob = t.tidy(Group, req.body);
+    if (group.organizerId != req.userObject.id) {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the organizer of this Group",
+        statusCode: 401,
+      };
+    }
+    await group.update(ob);
+    res.json(group);
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.delete("/groups/:group_id", authMiddle, async (req, res) => {
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
+    });
+    if (!group) {
+      res.statusCode = 404;
+      throw {
+        message: "Group couldn't be found",
+        statusCode: 404,
+      };
+    }
+    if (group.organizerId != req.userObject.id) {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the organizer of this Group",
+        statusCode: 401,
+      };
+    }
+    await group.destroy();
+    res.json({
+      message: "Successfully deleted",
+      statusCode: 200,
+    });
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.get("/groups/:group_id/venues", async (req, res) => {
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
+    });
+    let venues = await group.getVenues();
+    res.json({ Venues: venues });
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.post("/groups/:group_id/venues", authMiddle, async (req, res) => {
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
+    });
+    console.log(group.organizerId, req.userId);
+    if (group.organizerId != req.userId)
+      throw { Error: "You are not the Group Organizer" };
+
+    let data = t.tidy(Venue, req.body);
+    data.groupId = req.params.group_id;
+
+    let venue = await Venue.create(data);
+    let { createdAt, updatedAt, ...rest } = venue.dataValues;
+    res.json(rest);
+  } catch (e) {
+    res.json(e);
+  }
+});
 router.put("/venues/:venue_id", (req, res) => {});
 router.get("/events/all", (req, res) => {});
 router.get("/groups/:group_id/events", (req, res) => {});
 router.get("/events/:event_id", (req, res) => {});
-router.post("/groups/:group_id/events", (req, res) => {});
+router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
+    });
+    console.log(group.organizerId, req.userId);
+    if (group.organizerId != req.userId)
+      throw { Error: "You are not the Group Organizer" };
+
+    let data = t.tidy(Event, req.body);
+    data.numAttending = 0;
+    data.groupId = req.params.group_id;
+
+    let event = await Event.create(data);
+    let { createdAt, updatedAt, ...rest } = event.dataValues;
+    res.json(rest);
+  } catch (e) {
+    res.json(e);
+  }
+});
 router.post("/events/:event_id/image", (req, res) => {});
 router.put("/events/:event_id", (req, res) => {});
 router.get("/groups/:group_id/members", (req, res) => {});
