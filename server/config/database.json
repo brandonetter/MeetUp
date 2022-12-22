@@ -2,5 +2,9 @@
   "development": {
     "storage": "./server/dev.db",
     "dialect": "sqlite"
+  },
+  "test": {
+    "url": "postgres://formeetup_user:A6HO3qO5YX7lP8R7IJvv78px2dIJtAhP@dpg-ceiermcgqg4dlfb7iskg-a/formeetup",
+    "dialect": "postgres"
   }
 }
