@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "cd server && nodemon app.js",
     "start": "cd server && node app.js",
+    "start-render": "cd server && env NODE_ENV=development node app.js",
     "insall": "npm install && npm install sequelize-cli && npx sequelize db:migrate"
   },
   "dependencies": {
