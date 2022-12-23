@@ -4,6 +4,7 @@
     "dialect": "sqlite"
   },
   "test": {
+    "use_env_variable": "postgres://formeetup_user:A6HO3qO5YX7lP8R7IJvv78px2dIJtAhP@dpg-ceiermcgqg4dlfb7iskg-a/formeetup",
     "url": "postgres://formeetup_user:A6HO3qO5YX7lP8R7IJvv78px2dIJtAhP@dpg-ceiermcgqg4dlfb7iskg-a/formeetup",
 
     "dialect": "postgres"
