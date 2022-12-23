@@ -3,7 +3,7 @@
     "dev": "cd server && nodemon app.js",
     "start": "cd server && node app.js",
     "start-render": "cd server && env NODE_ENV=test node app.js",
-    "insall": "npm install && npm install sequelize-cli && npx sequelize db:migrate"
+    "insall": "npm install && npm install sequelize-cli && env NODE_ENV=test npx sequelize db:migrate"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
