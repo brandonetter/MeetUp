@@ -11,7 +11,7 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(config.url, config);
   console.log("TOP TOP TP OPPTTOPTPOTOTOPTO");
 } else {
   console.log("BOT BOT BOT saasdad");
