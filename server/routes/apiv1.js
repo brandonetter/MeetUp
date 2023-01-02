@@ -732,12 +732,12 @@ router.get("/events/:event_id/attendees", softAuthMiddle, async (req, res) => {
         //   ),
         //   "usersList",
         // ],
-        [
-          Sequelize.literal(
-            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
-          ),
-          "organizerId",
-        ],
+        // [
+        //   Sequelize.literal(
+        //     `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
+        //   ),
+        //   "organizerId",
+        // ],
         [
           Sequelize.literal(
             `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${Number(
