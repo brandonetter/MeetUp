@@ -1106,7 +1106,7 @@ router.get("/events", async (req, res) => {
         ],
         [
           Sequelize.literal(
-            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId")`
+            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId" LIMIT 1)`
           ),
           "Venue",
         ],
