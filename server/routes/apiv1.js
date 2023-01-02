@@ -1133,7 +1133,7 @@ router.get("/events", async (req, res) => {
         state: g[2],
       };
     });
-    res.json(events);
+    res.json({ Events: events });
   } catch (e) {
     res.json(e);
   }
