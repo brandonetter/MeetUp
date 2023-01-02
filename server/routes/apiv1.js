@@ -457,7 +457,7 @@ router.get("/groups/:group_id/join", authMiddle, async (req, res) => {
   try {
     let result = await req.userObject.addToGroup(group);
     if (!result.status) {
-      res.statusCode = result.statusCode;
+      res.statusCode = result.statusCode || 200;
       throw {
         message: result.message,
         statusCode: result.statusCode,
@@ -498,8 +498,11 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         ],
       ],
     });
+
+    let oldStatus = userGroup.status;
     console.log(userGroup);
     if (!userGroup) {
+      console.log("eayuyyy");
       res.statusCode = 404;
       throw {
         message: "Membership couldn't be found",
@@ -541,6 +544,13 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
     }
     try {
       await userGroup.update(ob);
+      let group = await Group.findOne({
+        where: {
+          id: userGroup.groupId,
+        },
+      });
+      if (oldStatus === "pending") group.numMembers += 1;
+      await group.save();
     } catch (e) {
       console.log(e);
     }
@@ -551,7 +561,10 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
     delete userGroup.dataValues.ourStatus;
     res.json(userGroup);
   } catch (e) {
-    res.json(e);
+    res.json({
+      message: "Membership couldn't be found",
+      statusCode: 404,
+    });
   }
 });
 router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
@@ -588,6 +601,13 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
         req.body.memberId === req.userObject.id ||
         req.userObject.id === organizerId
       ) {
+        let grup = await Group.findOne({
+          where: {
+            id: userGroup.groupId,
+          },
+        });
+        grup.numMembers -= 1;
+        await grup.save();
         await userGroup.destroy();
         res.json({
           message: "Successfully deleted membership from group",

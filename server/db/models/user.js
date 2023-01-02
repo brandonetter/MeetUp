@@ -59,13 +59,16 @@ module.exports = (sequelize, DataTypes) => {
     async addToGroup(group) {
       let success = {};
       let group_id = group.id;
+      console.log("we here1", group_id);
       let userGroup = await sequelize.models.UserGroup.findOne({
         where: {
           userId: this.id,
           groupId: group_id,
         },
       });
+      console.log(userGroup);
       if (!userGroup) {
+        console.log("we here");
         await this.addGroup(group);
         success.status = true;
         return success;
@@ -77,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
         success.message = "Membership has already been requested";
       }
 
-      if (userGroup.status === "member") {
+      if (userGroup.status === "member" || userGroup.status === "co-host") {
         success.statusCode = 400;
         success.message = "User is already a member of the group";
       }
