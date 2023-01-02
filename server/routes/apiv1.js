@@ -761,9 +761,281 @@ router.put("/events/:event_id/attendees", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
-router.delete("/events/:event_id/attendees", (req, res) => {});
-router.delete("/groups/:group_id/images/:image_id", (req, res) => {});
-router.delete("/events/:event_id/images/:image_id", (req, res) => {});
-router.get("/events", (req, res) => {});
+router.delete("/events/:event_id/attendees", authMiddle, async (req, res) => {
+  try {
+    let userGroup = await UserEvent.findOne({
+      where: {
+        userId: req.body.userId,
+        eventId: req.params.event_id,
+      },
+      attributes: [
+        "id",
+        "userId",
+        "eventId",
+        "status",
 
+        [
+          Sequelize.literal(
+            `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId))`
+          ),
+          "organizerId",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId) AND userG.userId = ${req.userObject.id})`
+          ),
+          "GroupStatus",
+        ],
+      ],
+    });
+    if (!userGroup) {
+      res.statusCode = 404;
+      throw {
+        message: "Attendee for Event couldn't be found",
+        statusCode: 404,
+      };
+    }
+
+    if (
+      userGroup.dataValues.groupStatus == "co-host" ||
+      userGroup.dataValues.organizerId == req.userObject.id ||
+      userGroup.dataValues.userId == req.userObject.id
+    ) {
+      await userGroup.destroy();
+    } else {
+      res.statusCode = 401;
+      throw {
+        message: "Only the User or organizer may delete an Attendance",
+        statusCode: 403,
+      };
+    }
+
+    res.json({
+      message: "Successfully deleted attendance from event",
+    });
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.delete(
+  "/groups/:group_id/images/:image_id",
+  authMiddle,
+  async (req, res) => {
+    //remove entry from Image table
+    try {
+      let im = await Image.findOne({
+        where: { id: req.params.image_id, groupId: req.params.group_id },
+        attributes: [
+          "id",
+          [
+            Sequelize.literal(
+              `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id = ${Number(
+                req.params.group_id
+              )})`
+            ),
+            "organizerId",
+          ],
+          [
+            Sequelize.literal(
+              `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId=${Number(
+                req.params.group_id
+              )} AND userG.userId = ${req.userObject.id})`
+            ),
+            "GroupStatus",
+          ],
+        ],
+      });
+
+      if (
+        im.dataValues.organizerId == req.userObject.id ||
+        im.dataValues.GroupStatus == "co-host"
+      ) {
+        await im.destroy();
+
+        res.json({
+          message: "Successfully deleted",
+          statusCode: 200,
+        });
+      } else {
+        res.json({
+          message:
+            "You are not the Organizer or Co-Host for the Group this Image belongs to.",
+          statusCode: 401,
+        });
+      }
+    } catch (e) {
+      res.json({
+        message: "Group Image couldn't be found",
+        statusCode: 404,
+      });
+    }
+  }
+);
+router.delete(
+  "/events/:event_id/images/:image_id",
+  authMiddle,
+  async (req, res) => {
+    try {
+      let im = await Image.findOne({
+        where: { id: req.params.image_id, eventId: req.params.event_id },
+        attributes: [
+          "id",
+          [
+            Sequelize.literal(
+              `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id in (SELECT groupId from Events WHERE id = ${Number(
+                req.params.event_id
+              )}))`
+            ),
+            "organizerId",
+          ],
+          [
+            Sequelize.literal(
+              `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId in (SELECT groupId from Events WHERE id = ${Number(
+                req.params.event_id
+              )}) AND userG.userId = ${req.userObject.id})`
+            ),
+            "GroupStatus",
+          ],
+        ],
+      });
+      console.log(im);
+      if (
+        im.dataValues.organizerId == req.userObject.id ||
+        im.dataValues.GroupStatus == "co-host"
+      ) {
+        await im.destroy();
+
+        res.json({
+          message: "Successfully deleted",
+          statusCode: 200,
+        });
+      } else {
+        res.json({
+          message:
+            "You are not the Organizer or Co-Host for the Group this Image belongs to.",
+          statusCode: 401,
+        });
+      }
+    } catch (e) {
+      res.json({
+        message: "Event Image couldn't be found",
+        statusCode: 404,
+      });
+    }
+  }
+);
+router.get("/events", async (req, res) => {
+  try {
+    //input validation
+    let errors = paginateValidation(req.query);
+    if (errors.length) {
+      throw errors;
+    }
+    //end input validation
+    let {
+      page = 0,
+      size = 0,
+      name = false,
+      type = false,
+      startDate = false,
+    } = req.query;
+
+    console.log(name);
+    let events = await Event.findAll({
+      limit: size,
+      offset: size * page,
+      where: {
+        ...(name && { name: { [Sequelize.Op.like]: `%${name}%` } }),
+        ...(type && { type: type }),
+        ...(startDate && { startDate: { [Sequelize.Op.gte]: startDate } }),
+      },
+
+      attributes: [
+        "id",
+        "groupId",
+        "venueId",
+        "name",
+        "type",
+        "startDate",
+        "endDate",
+        "numAttending",
+        [
+          Sequelize.literal(
+            `(SELECT im.url from Images as im WHERE im.eventId = Event.id AND im.preview = 1 )`
+          ),
+          "previewImage",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT g.id||','||g.name||','||g.city||','||g.state as f from Groups as g WHERE id = Event.groupId)`
+          ),
+          "Group",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT id||','||city||','||state as f from Venues WHERE groupId = Event.groupId)`
+          ),
+          "Venue",
+        ],
+      ],
+    });
+    events.forEach((evt) => {
+      if (!evt.dataValues.Group) return;
+
+      let g = evt.dataValues.Group.split(",");
+      evt.dataValues.Group = {
+        id: g[0],
+        name: g[1],
+        city: g[2],
+        state: g[3],
+      };
+    });
+    events.forEach((evt) => {
+      if (!evt.dataValues.Venue) return;
+
+      let g = evt.dataValues.Venue.split(",");
+      evt.dataValues.Venue = {
+        id: g[0],
+        city: g[1],
+        state: g[2],
+      };
+    });
+    res.json(events);
+  } catch (e) {
+    res.json(e);
+  }
+});
+
+function paginateValidation(query) {
+  let req = { query: query };
+  let errors = [];
+  for (let key in req.query) {
+    let k = key.toLowerCase();
+    switch (true) {
+      case k == "page" || k == "size":
+        if (
+          !(Number(req.query[key]) >= 0) ||
+          Number(req.query[key] > (k == "size" ? 20 : 10))
+        ) {
+          errors.push(
+            key +
+              " must be greater than or equal to 0 and less than " +
+              (k == "size" ? 20 : 10)
+          );
+        }
+        break;
+      case k == "type":
+        if (req.query[key] != "Online" && req.query[key] != "In Person") {
+          errors.push("Type must be 'Online' or 'In Person'");
+        }
+        break;
+      case k == "startdate":
+        let d = new Date(req.query[key]);
+        if (!(d instanceof Date && isFinite(d))) {
+          errors.push("startDate must be a valid datetime");
+        }
+    }
+  }
+  return errors;
+}
 module.exports = router;
