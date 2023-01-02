@@ -10,12 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
     static associate(models) {
       User.belongsToMany(models.Group, {
         through: models.UserGroup,
         foreignKey: "userId",
       });
+      User.belongsToMany(models.Event, {
+        through: models.UserEvent,
+        foreignKey: "userId",
+      });
     }
+
     static validate = {
       email: (input) => {
         if (!(typeof input === "string")) return false;
@@ -53,13 +59,16 @@ module.exports = (sequelize, DataTypes) => {
     async addToGroup(group) {
       let success = {};
       let group_id = group.id;
+      console.log("we here1", group_id);
       let userGroup = await sequelize.models.UserGroup.findOne({
         where: {
           userId: this.id,
           groupId: group_id,
         },
       });
+      console.log(userGroup);
       if (!userGroup) {
+        console.log("we here");
         await this.addGroup(group);
         success.status = true;
         return success;
@@ -71,14 +80,47 @@ module.exports = (sequelize, DataTypes) => {
         success.message = "Membership has already been requested";
       }
 
-      if (userGroup.status === "member") {
+      if (userGroup.status === "member" || userGroup.status === "co-host") {
         success.statusCode = 400;
         success.message = "User is already a member of the group";
       }
       return success;
     }
+    async addToEvent(event) {
+      let success = {};
+      let event_id = event.id;
+      let userEvent = await sequelize.models.UserEvent.findOne({
+        where: {
+          userId: this.id,
+          eventId: event_id,
+        },
+      });
+      console.log(userEvent, "asdsada");
+      if (!userEvent) {
+        await this.addEvent(event);
+        success.status = true;
+        return success;
+      }
+
+      success.status = false;
+      if (userEvent.status === "pending") {
+        success.statusCode = 400;
+        success.message = "Attendance has already been requested";
+      }
+
+      if (userEvent.status === "member") {
+        success.statusCode = 400;
+        success.message = "User is already attending";
+      }
+      return success;
+    }
     async getAllGroups() {
       let groups = await this.getGroups();
+      groups = await Promise.all(
+        groups.map(async (x) => {
+          return await x.includePreview();
+        })
+      );
       groups = groups
         .filter((x) => {
           return x.UserGroup.dataValues.status != "pending";

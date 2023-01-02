@@ -4,17 +4,9 @@
     "dialect": "sqlite"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "use_env_variable": "postgres://meetup_user:5qugnIApMnL3xEihgOEU4YmUl0lbCnUl@dpg-cep7vp5a4991ihhqcoo0-a/meetup",
+    "url": "postgres://meetup_user:5qugnIApMnL3xEihgOEU4YmUl0lbCnUl@dpg-cep7vp5a4991ihhqcoo0-a/meetup",
+
+    "dialect": "postgres"
   }
 }

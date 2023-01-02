@@ -35,6 +35,23 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      hooks: {
+        afterValidate: async (image, options) => {
+          if (image.preview === true) {
+            let v = await sequelize.models.Image.findOne({
+              where: {
+                groupId: image.groupId,
+                eventId: image.eventId,
+                preview: true,
+              },
+            });
+            if (v) {
+              v.preview = false;
+              await v.save();
+            }
+          }
+        },
+      },
       sequelize,
       modelName: "Image",
     }

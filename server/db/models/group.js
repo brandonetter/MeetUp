@@ -8,7 +8,16 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+    update = async (data) => {
+      for (let key in data) {
+        if (data[key]) {
+          console.log(this[key], data[key]);
+          this[key] = data[key];
+        }
+      }
 
+      await this.save();
+    };
     static addNewImage = async (data) => {
       let { userId, ...ob } = data;
 
@@ -26,6 +35,33 @@ module.exports = (sequelize, DataTypes) => {
       }
       let image = await sequelize.models.Image.create(ob);
       return image;
+    };
+    includeImages = async () => {
+      let images = await sequelize.models.Image.findAll({
+        where: {
+          groupId: this.id,
+        },
+      });
+      if (images) {
+        images = images.map((im) => {
+          let { updatedAt, createdAt, eventId, groupId, ...rest } =
+            im.dataValues;
+
+          return rest;
+        });
+
+        this.dataValues.GroupImages = images;
+      }
+    };
+    includePreview = async () => {
+      let im = await sequelize.models.Image.findOne({
+        where: {
+          groupId: this.id,
+          preview: true,
+        },
+      });
+      if (im) this.dataValues.preview = im.url;
+      return this;
     };
     static validate = {
       name: (input) => {
@@ -61,6 +97,30 @@ module.exports = (sequelize, DataTypes) => {
         return group != null ? true : false;
       },
     };
+    getVenues = async function () {
+      let venues = await sequelize.models.Venue.findAll({
+        where: {
+          groupId: this.id,
+        },
+      });
+      venues = venues.map((ven) => {
+        let { createdAt, updatedAt, ...rest } = ven.dataValues;
+        return rest;
+      });
+      return venues;
+    };
+    getEvents = async function () {
+      let events = await sequelize.models.Event.findAll({
+        where: {
+          groupId: this.id,
+        },
+      });
+      events = events.map((ven) => {
+        let { createdAt, updatedAt, ...rest } = ven.dataValues;
+        return rest;
+      });
+      return events;
+    };
     addOrganizer = async function () {
       let user = await sequelize.models.User.findOne({
         where: { id: this.organizerId },
@@ -78,7 +138,6 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       usergroup.status = "member";
-      console.log(usergroup);
       this.numMembers += 1;
       await this.save();
       await usergroup.save();
@@ -86,7 +145,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Group.belongsToMany(models.User, {
         through: models.UserGroup,
-        foreignKey: "groupId",
+        foreignKey: { name: "groupId", allowNull: false },
+        hooks: true,
       });
     }
   }
@@ -149,7 +209,6 @@ module.exports = (sequelize, DataTypes) => {
           group.errors = [];
         },
         afterValidate: async (group, options) => {
-          console.log(group.city, "-=---=-=--==-=");
           let keys = Object.keys(group.dataValues);
           keys = keys.filter((v) => {
             return (
