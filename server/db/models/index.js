@@ -12,9 +12,7 @@ const db = {};
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(config.url, config);
-  console.log("TOP TOP TP OPPTTOPTPOTOTOPTO");
 } else {
-  console.log("BOT BOT BOT saasdad");
   config.storage = "../" + config.storage;
   sequelize = new Sequelize(
     config.database,

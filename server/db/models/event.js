@@ -7,8 +7,72 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+    getGroups = async function () {
+      let groups = await sequelize.models.Group.findOne({
+        where: {
+          id: this.groupId,
+        },
+      });
+
+      let {
+        createdAt,
+        updatedAt,
+        about,
+        organizerId,
+        type,
+        numMembers,
+
+        ...rest
+      } = groups.dataValues;
+      delete rest.private;
+      return rest;
+    };
+    getVenues = async function () {
+      let groups = await sequelize.models.Venue.findOne({
+        where: {
+          id: this.venueId,
+        },
+      });
+      if (groups) {
+        let {
+          createdAt,
+          updatedAt,
+          lat,
+          lng,
+          groupId,
+
+          ...rest
+        } = groups.dataValues;
+        return rest;
+      } else {
+        return null;
+      }
+    };
+    static addNewImage = async (data) => {
+      let { userId, ...ob } = data;
+
+      let event = await sequelize.models.UserEvent.findOne({
+        where: {
+          eventId: Number(ob.eventId),
+          userId: userId,
+        },
+      });
+      if (event == null) {
+        throw {
+          message: "User not attending event",
+          statusCode: 404,
+        };
+      }
+      let image = await sequelize.models.Image.create(ob);
+      return image;
+    };
     static associate(models) {
       // define association here
+      Event.belongsToMany(models.User, {
+        through: models.UserEvent,
+        foreignKey: { name: "eventId", allowNull: false },
+        hooks: true,
+      });
     }
   }
   Event.init(

@@ -104,11 +104,22 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
       venues = venues.map((ven) => {
-        console.log(ven);
         let { createdAt, updatedAt, ...rest } = ven.dataValues;
         return rest;
       });
       return venues;
+    };
+    getEvents = async function () {
+      let events = await sequelize.models.Event.findAll({
+        where: {
+          groupId: this.id,
+        },
+      });
+      events = events.map((ven) => {
+        let { createdAt, updatedAt, ...rest } = ven.dataValues;
+        return rest;
+      });
+      return events;
     };
     addOrganizer = async function () {
       let user = await sequelize.models.User.findOne({

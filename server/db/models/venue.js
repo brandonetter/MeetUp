@@ -28,12 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       lat: (input) => {
         if (input == null) return "Lat Must be a floating point decimal.";
+        input = String(input);
         let format = /^-?[0-9]{1,}\.[0-9]{1,}$/;
         return input.match(format);
       },
       lng: (input) => {
         if (input == null) return "Lng Must be a floating point decimal";
-
+        input = String(input);
         let format = /^-?[0-9]{1,}\.[0-9]{1,}$/;
         return input.match(format);
       },

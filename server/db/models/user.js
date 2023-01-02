@@ -10,12 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
     static associate(models) {
       User.belongsToMany(models.Group, {
         through: models.UserGroup,
         foreignKey: "userId",
       });
+      User.belongsToMany(models.Event, {
+        through: models.UserEvent,
+        foreignKey: "userId",
+      });
     }
+
     static validate = {
       email: (input) => {
         if (!(typeof input === "string")) return false;
@@ -74,6 +80,34 @@ module.exports = (sequelize, DataTypes) => {
       if (userGroup.status === "member") {
         success.statusCode = 400;
         success.message = "User is already a member of the group";
+      }
+      return success;
+    }
+    async addToEvent(event) {
+      let success = {};
+      let event_id = event.id;
+      let userEvent = await sequelize.models.UserEvent.findOne({
+        where: {
+          userId: this.id,
+          eventId: event_id,
+        },
+      });
+      console.log(userEvent, "asdsada");
+      if (!userEvent) {
+        await this.addEvent(event);
+        success.status = true;
+        return success;
+      }
+
+      success.status = false;
+      if (userEvent.status === "pending") {
+        success.statusCode = 400;
+        success.message = "Attendance has already been requested";
+      }
+
+      if (userEvent.status === "member") {
+        success.statusCode = 400;
+        success.message = "User is already attending";
       }
       return success;
     }
