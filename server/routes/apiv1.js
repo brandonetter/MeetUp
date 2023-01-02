@@ -981,7 +981,7 @@ router.get("/events", async (req, res) => {
         "numAttending",
         [
           Sequelize.literal(
-            `(SELECT "im"."url" from Images as "im" WHERE "im"."eventId" = "Event"."id" AND "im"."preview" = 1 )`
+            `(SELECT "im"."url" from "Images" as "im" WHERE "im"."eventId" = "Event"."id" AND "im"."preview" = 1 )`
           ),
           "previewImage",
         ],
