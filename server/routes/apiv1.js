@@ -726,9 +726,11 @@ router.get("/events/:event_id/attendees", softAuthMiddle, async (req, res) => {
       attributes: [
         "id",
         "status",
+        "userId",
+        "eventId",
         [
           Sequelize.literal(
-            `(SELECT "user"."id" ||','|| "user"."firstname"||','||"user"."lastname" as "fn" FROM 'Users' as "user" WHERE "user"."id"="UserEvent"."userId")`
+            `(SELECT "userr"."id" FROM 'Users' as "userr" WHERE "userr"."id"="UserEvent"."userId")`
           ),
           "usersList",
         ],
