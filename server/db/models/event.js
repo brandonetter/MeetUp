@@ -13,19 +13,20 @@ module.exports = (sequelize, DataTypes) => {
           id: this.groupId,
         },
       });
+      if (groups) {
+        let {
+          createdAt,
+          updatedAt,
+          about,
+          organizerId,
+          type,
+          numMembers,
 
-      let {
-        createdAt,
-        updatedAt,
-        about,
-        organizerId,
-        type,
-        numMembers,
-
-        ...rest
-      } = groups.dataValues;
-      delete rest.private;
-      return rest;
+          ...rest
+        } = groups?.dataValues;
+        delete rest.private;
+        return rest;
+      }
     };
     getVenues = async function () {
       let groups = await sequelize.models.Venue.findOne({
@@ -57,10 +58,11 @@ module.exports = (sequelize, DataTypes) => {
           userId: userId,
         },
       });
+      console.log(event);
       if (event == null) {
         throw {
-          message: "User not attending event",
-          statusCode: 404,
+          message: "User is not attending event",
+          statusCode: 401,
         };
       }
       let image = await sequelize.models.Image.create(ob);

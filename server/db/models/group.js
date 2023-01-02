@@ -195,7 +195,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       numMembers: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: 0,
         validate: {
           valid(value) {
             if (value === null) this.numMembers = 0;

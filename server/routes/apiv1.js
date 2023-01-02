@@ -60,10 +60,8 @@ async function softAuthMiddle(req, res, next) {
   next();
 }
 router.post("/auth/new", async (req, res) => {
-  console.log(req.body);
   try {
     ob = t.tidy(User, req.body);
-    console.log("aas");
     let user = await User.create(ob);
     let { salt, hash, updatedAt, createdAt, ...rest } = user.dataValues;
     res.json({ user: rest });
@@ -218,13 +216,38 @@ router.delete("/groups/:group_id", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
-router.get("/groups/:group_id/venues", async (req, res) => {
+router.get("/groups/:group_id/venues", authMiddle, async (req, res) => {
   try {
     let group = await Group.findOne({
       where: {
         id: req.params.group_id,
       },
+      attributes: [
+        "id",
+        "organizerId",
+        [
+          Sequelize.literal(
+            `(SELECT "ug"."status" FROM "UserGroups" as "ug" WHERE "ug"."groupId"=${Number(
+              req.params.group_id
+            )} AND "ug"."userId"=${req.userObject.id})`
+          ),
+          "ourStatus",
+        ],
+      ],
     });
+
+    if (!group) {
+      res.statusCode = 404;
+      throw { message: "Group Not Found" };
+    }
+    if (
+      group.dataValues.ourStatus != "co-host" &&
+      group.dataValues.ourStatus != "member" &&
+      group.dataValues.organizerId != req.userObject.id
+    ) {
+      res.statusCode = 401;
+      throw { message: "You are not the Organizer or Co-host" };
+    }
     let venues = await group.getVenues();
     res.json({ Venues: venues });
   } catch (e) {
@@ -238,7 +261,12 @@ router.post("/groups/:group_id/venues", authMiddle, async (req, res) => {
         id: req.params.group_id,
       },
     });
-    console.log(group.organizerId, req.userId);
+    if (!group) {
+      res.statusCode = 404;
+      throw {
+        Error: "Group Does Not Exist",
+      };
+    }
     if (group.organizerId != req.userId)
       throw { Error: "You are not the Group Organizer" };
 
@@ -259,6 +287,27 @@ router.put("/venues/:venue_id", async (req, res) => {
       where: {
         id: req.params.venue_id,
       },
+      attributes: [
+        "id",
+        "groupId",
+        "address",
+        "city",
+        "state",
+        "lat",
+        "lng",
+        [
+          Sequelize.literal(
+            `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Venue"."groupId")`
+          ),
+          "organizerId",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Venue"."groupId" AND "ug"."userId"=${req.userObject.id})`
+          ),
+          "ourStatus",
+        ],
+      ],
     });
     if (!venue) {
       res.statusCode = 404;
@@ -267,6 +316,15 @@ router.put("/venues/:venue_id", async (req, res) => {
         statusCode: 404,
       };
     }
+    let { ourStatus, organizerId } = venue.dataValues;
+    if (organizerId != req.userObject.id && ourStatus != "co-host") {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the Organizer or the co-host for this Group",
+      };
+    }
+    delete venue.dataValues.ourStatus;
+    delete venue.dataValues.organizerId;
     let ob = t.tidy(Venue, req.body);
 
     for (let i in ob) {
@@ -276,9 +334,7 @@ router.put("/venues/:venue_id", async (req, res) => {
     ob.groupId = venue.groupId;
     try {
       await venue.update(ob);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     res.json(venue);
   } catch (e) {
     res.json(e);
@@ -293,6 +349,8 @@ router.get("/events/all", async (req, res) => {
         let venues = await x.getVenues();
         groups && (x.dataValues.Group = groups);
         venues && (x.dataValues.Venue = venues);
+        delete x?.dataValues?.createdAt;
+        delete x?.dataValues?.updatedAt;
         return x;
       })
     );
@@ -302,36 +360,44 @@ router.get("/events/all", async (req, res) => {
   }
 });
 
-router.get("/groups/:group_id/events", (req, res) => {
+router.get("/groups/:group_id/events", async (req, res) => {
   //get all events based on group ID
-  Group.findOne({
-    where: {
-      id: req.params.group_id,
-    },
-  })
-    .then((group) => {
-      group.getEvents().then((events) => {
-        res.json({ Events: events });
-      });
-    })
-    .catch((e) => {
-      res.json(e);
+  try {
+    let group = await Group.findOne({
+      where: {
+        id: req.params.group_id,
+      },
     });
+    if (!group) {
+      res.statusCode = 404;
+      throw { message: "Group Not Found" };
+    }
+    group.getEvents().then((events) => {
+      res.json({ Events: events });
+    });
+  } catch (e) {
+    res.json(e);
+  }
 });
-router.get("/events/:event_id", (req, res) => {
+router.get("/events/:event_id", async (req, res) => {
   //return event based on event id
-  Event.findOne({
-    where: {
-      id: req.params.event_id,
-    },
-  })
-    .then((event) => {
-      let { createdAt, updatedAt, ...rest } = event.dataValues;
-      res.json(rest);
-    })
-    .catch((e) => {
-      res.json(e);
+  try {
+    let event = await Event.findOne({
+      where: {
+        id: req.params.event_id,
+      },
     });
+    if (!event) {
+      res.statusCode = 404;
+      throw {
+        message: "Event Not Found",
+      };
+    }
+    let { createdAt, updatedAt, ...rest } = event.dataValues;
+    res.json(rest);
+  } catch (e) {
+    res.json(e);
+  }
 });
 router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
   try {
@@ -339,11 +405,29 @@ router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
       where: {
         id: req.params.group_id,
       },
+      attributes: [
+        "id",
+        "organizerId",
+        [
+          Sequelize.literal(
+            `(SELECT "venue"."id" FROM "Venues" as "venue" WHERE "venue"."id"=${Number(
+              req.body.venueId
+            )})`
+          ),
+          "venue",
+        ],
+      ],
     });
-    console.log(group.organizerId, req.userId);
+    if (!group) {
+      res.statusCode = 404;
+      throw { message: "Group not found" };
+    }
     if (group.organizerId != req.userId)
       throw { Error: "You are not the Group Organizer" };
-
+    if (group.dataValues.venue == null) {
+      res.statusCode = 400;
+      throw { message: "Venue does not exist" };
+    }
     let data = t.tidy(Event, req.body);
     data.numAttending = 1;
     data.groupId = req.params.group_id;
@@ -366,9 +450,20 @@ router.post("/events/:event_id/image", authMiddle, async (req, res) => {
     let ob = t.tidy(Image, req.body);
     ob.userId = req.userId;
     ob.eventId = req.params.event_id;
+    let event = await Event.findOne({
+      where: {
+        id: ob.eventId,
+      },
+    });
+    if (!event) {
+      res.statusCode = 404;
+      throw { message: "Event couldn't be found" };
+    }
     let result = await Event.addNewImage(ob);
+
     res.json(result);
   } catch (e) {
+    res.statusCode = e.statusCode || 404;
     res.json(e);
   }
 });
@@ -404,6 +499,8 @@ router.put("/events/:event_id", authMiddle, async (req, res) => {
       };
     }
     await event.update(ob);
+    delete event.dataValues.createdAt;
+    delete event.dataValues.updatedAt;
     res.json(event);
   } catch (e) {
     res.json(e);
@@ -486,23 +583,21 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT organizerId FROM 'Groups' WHERE id=${req.params.group_id})`
+            `(SELECT "organizerId" FROM 'Groups' WHERE "id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT status FROM 'UserGroups' WHERE groupId=${req.params.group_id} AND userId=${req.userObject.id})`
+            `(SELECT "status" FROM 'UserGroups' WHERE "groupId"=${req.params.group_id} AND "userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
       ],
     });
 
-    let oldStatus = userGroup.status;
-    console.log(userGroup);
+    let oldStatus = userGroup?.status;
     if (!userGroup) {
-      console.log("eayuyyy");
       res.statusCode = 404;
       throw {
         message: "Membership couldn't be found",
@@ -551,9 +646,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
       });
       if (oldStatus === "pending") group.numMembers += 1;
       await group.save();
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     delete userGroup.dataValues.updatedAt;
     delete userGroup.dataValues.organizerId;
     userGroup.dataValues.memberId = userGroup.dataValues.userId;
@@ -561,10 +654,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
     delete userGroup.dataValues.ourStatus;
     res.json(userGroup);
   } catch (e) {
-    res.json({
-      message: "Membership couldn't be found",
-      statusCode: 404,
-    });
+    res.json(e);
   }
 });
 router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
@@ -581,13 +671,13 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT organizerId FROM 'Groups' WHERE id=${req.params.group_id})`
+            `(SELECT "organizerId" FROM 'Groups' WHERE "id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT status FROM 'UserGroups' WHERE groupId=${req.params.group_id} AND userId=${req.userObject.id})`
+            `(SELECT "status" FROM 'UserGroups' WHERE "groupId"=${req.params.group_id} AND "userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
@@ -656,7 +746,6 @@ router.get("/events/:event_id/attendees", softAuthMiddle, async (req, res) => {
         ],
       ],
     });
-    console.log("yea");
     let response = { Attendees: [] };
 
     userEvent.forEach((att) => {
@@ -727,18 +816,19 @@ router.put("/events/:event_id/attendees", authMiddle, async (req, res) => {
 
         [
           Sequelize.literal(
-            `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId))`
+            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId) AND userG.userId = ${req.userObject.id})`
+            `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${req.userObject.id})`
           ),
           "GroupStatus",
         ],
       ],
     });
+    let oldStatus = userGroup.dataValues.status;
     if (!userGroup) {
       res.statusCode = 404;
       throw {
@@ -762,6 +852,15 @@ router.put("/events/:event_id/attendees", authMiddle, async (req, res) => {
       userGroup.dataValues.groupStatus == "co-host" ||
       userGroup.dataValues.organizerId == req.userObject.id
     ) {
+      if (oldStatus == "pending") {
+        let event = await Event.findOne({
+          where: {
+            id: userGroup.data.id,
+          },
+        });
+        event.numAttending += 1;
+        await event.save();
+      }
       await userGroup.update(ob);
     } else {
       res.statusCode = 401;
@@ -778,7 +877,11 @@ router.put("/events/:event_id/attendees", authMiddle, async (req, res) => {
     delete userGroup.dataValues.GroupStatus;
     res.json(userGroup);
   } catch (e) {
-    res.json(e);
+    res.statusCode = 404;
+    res.json({
+      message: "Event Could Not Be Found",
+      statusCode: 404,
+    });
   }
 });
 router.delete("/events/:event_id/attendees", authMiddle, async (req, res) => {
@@ -796,13 +899,13 @@ router.delete("/events/:event_id/attendees", authMiddle, async (req, res) => {
 
         [
           Sequelize.literal(
-            `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId))`
+            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId in (SELECT event.groupId FROM 'Events' as event WHERE event.id=UserEvent.eventId) AND userG.userId = ${req.userObject.id})`
+            `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${req.userObject.id})`
           ),
           "GroupStatus",
         ],
@@ -821,6 +924,13 @@ router.delete("/events/:event_id/attendees", authMiddle, async (req, res) => {
       userGroup.dataValues.organizerId == req.userObject.id ||
       userGroup.dataValues.userId == req.userObject.id
     ) {
+      let event = await Event.findOne({
+        where: {
+          id: userGroup.eventId,
+        },
+      });
+      event.numAttending -= 1;
+      await event.save();
       await userGroup.destroy();
     } else {
       res.statusCode = 401;
@@ -849,7 +959,7 @@ router.delete(
           "id",
           [
             Sequelize.literal(
-              `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id = ${Number(
+              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" = ${Number(
                 req.params.group_id
               )})`
             ),
@@ -857,9 +967,9 @@ router.delete(
           ],
           [
             Sequelize.literal(
-              `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId=${Number(
+              `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId"=${Number(
                 req.params.group_id
-              )} AND userG.userId = ${req.userObject.id})`
+              )} AND "userG"."userId" = ${req.userObject.id})`
             ),
             "GroupStatus",
           ],
@@ -902,7 +1012,7 @@ router.delete(
           "id",
           [
             Sequelize.literal(
-              `(SELECT grouped.organizerId FROM 'Groups' as grouped WHERE grouped.id in (SELECT groupId from Events WHERE id = ${Number(
+              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "groupId" from "Events" WHERE id = ${Number(
                 req.params.event_id
               )}))`
             ),
@@ -910,15 +1020,14 @@ router.delete(
           ],
           [
             Sequelize.literal(
-              `(SELECT userG.status FROM 'UserGroups' as userG WHERE userG.groupId in (SELECT groupId from Events WHERE id = ${Number(
+              `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "groupId" from "Events" WHERE id = ${Number(
                 req.params.event_id
-              )}) AND userG.userId = ${req.userObject.id})`
+              )}) AND "userG"."userId" = ${req.userObject.id})`
             ),
             "GroupStatus",
           ],
         ],
       });
-      console.log(im);
       if (
         im.dataValues.organizerId == req.userObject.id ||
         im.dataValues.GroupStatus == "co-host"
@@ -960,7 +1069,6 @@ router.get("/events", async (req, res) => {
       startDate = false,
     } = req.query;
 
-    console.log(name);
     let events = await Event.findAll({
       limit: size,
       offset: size * page,
@@ -981,19 +1089,19 @@ router.get("/events", async (req, res) => {
         "numAttending",
         [
           Sequelize.literal(
-            `(SELECT im.url from Images as im WHERE im.eventId = Event.id AND im.preview = 1 )`
+            `(SELECT "im"."url" from "Images" as "im" WHERE "im"."eventId" = "Event"."id" AND "im"."preview" = TRUE )`
           ),
           "previewImage",
         ],
         [
           Sequelize.literal(
-            `(SELECT g.id||','||g.name||','||g.city||','||g.state as f from Groups as g WHERE id = Event.groupId)`
+            `(SELECT "g"."id"||','||"g"."name"||','||"g"."city"||','||"g"."state" as "f" from "Groups" as "g" WHERE "id" = "Event"."groupId")`
           ),
           "Group",
         ],
         [
           Sequelize.literal(
-            `(SELECT id||','||city||','||state as f from Venues WHERE groupId = Event.groupId)`
+            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId")`
           ),
           "Venue",
         ],
