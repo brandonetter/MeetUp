@@ -981,19 +981,19 @@ router.get("/events", async (req, res) => {
         "numAttending",
         [
           Sequelize.literal(
-            `(SELECT im.url from Images as im WHERE im.eventId = Event.id AND im.preview = 1 )`
+            `(SELECT "im"."url" from Images as "im" WHERE "im"."eventId" = "Event"."id" AND "im"."preview" = 1 )`
           ),
           "previewImage",
         ],
         [
           Sequelize.literal(
-            `(SELECT g.id||','||g.name||','||g.city||','||g.state as f from Groups as g WHERE id = Event.groupId)`
+            `(SELECT "g"."id"||','||"g"."name"||','||"g"."city"||','||"g"."state" as "f" from "Groups" as "g" WHERE "id" = "Event"."groupId")`
           ),
           "Group",
         ],
         [
           Sequelize.literal(
-            `(SELECT id||','||city||','||state as f from Venues WHERE groupId = Event.groupId)`
+            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId")`
           ),
           "Venue",
         ],
