@@ -48,7 +48,14 @@ db.Tools = {
   tidy: function (model, body) {
     let keys = Object.keys(model.tableAttributes);
     keys = keys.filter((v) => {
-      return v != "createdAt" && v != "updatedAt" && v != "salt" && v != "id";
+      return (
+        v != "createdAt" &&
+        v != "updatedAt" &&
+        v != "salt" &&
+        v != "id" &&
+        v != "numMembers" &&
+        v != "numAttending"
+      );
     });
     let ob = {};
     keys.forEach((val) => {
