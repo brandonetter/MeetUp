@@ -726,26 +726,26 @@ router.get("/events/:event_id/attendees", softAuthMiddle, async (req, res) => {
       attributes: [
         "id",
         "status",
-        // [
-        //   Sequelize.literal(
-        //     `(SELECT "user"."id" ||','|| "user"."firstname"||','||"user"."lastname" as "fn" FROM 'Users' as "user" WHERE "user"."id"="UserEvent"."userId")`
-        //   ),
-        //   "usersList",
-        // ],
-        // [
-        //   Sequelize.literal(
-        //     `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
-        //   ),
-        //   "organizerId",
-        // ],
         [
           Sequelize.literal(
-            `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${Number(
-              req.userObject.id
-            )})`
+            `(SELECT "user"."id" ||','|| "user"."firstname"||','||"user"."lastname" as "fn" FROM 'Users' as "user" WHERE "user"."id"="UserEvent"."userId")`
           ),
-          "GroupStatus",
+          "usersList",
         ],
+        [
+          Sequelize.literal(
+            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
+          ),
+          "organizerId",
+        ],
+        // [
+        //   Sequelize.literal(
+        //     `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${Number(
+        //       req.userObject.id
+        //     )})`
+        //   ),
+        //   "GroupStatus",
+        // ],
       ],
     });
     let response = { Attendees: [] };
