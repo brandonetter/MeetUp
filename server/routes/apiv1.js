@@ -1014,9 +1014,9 @@ router.delete(
           "id",
           [
             Sequelize.literal(
-              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "groupId" from "Events" WHERE id = ${Number(
+              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "groupId" from "Events" WHERE id = '${Number(
                 req.params.event_id
-              )}))`
+              )}'))`
             ),
             "organizerId",
           ],
