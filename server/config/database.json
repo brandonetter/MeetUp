@@ -8,5 +8,11 @@
     "url": "postgres://meetup_user:5qugnIApMnL3xEihgOEU4YmUl0lbCnUl@dpg-cep7vp5a4991ihhqcoo0-a/meetup",
 
     "dialect": "postgres"
+  },
+  "test2": {
+    "use_env_variable": "postgresql://postgres:acbme1@localhost/postgres",
+    "url": "postgresql://postgres:acbme1@localhost/postgres",
+
+    "dialect": "postgres"
   }
 }

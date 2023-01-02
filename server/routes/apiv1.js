@@ -583,7 +583,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM 'Groups' WHERE "id"=${req.params.group_id})`
+            `(SELECT "organizerId" FROM "Groups" WHERE "id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
@@ -726,21 +726,25 @@ router.get("/events/:event_id/attendees", softAuthMiddle, async (req, res) => {
       attributes: [
         "id",
         "status",
+        "userId",
+        "eventId",
         [
           Sequelize.literal(
-            `(SELECT "user"."id" ||','|| "user"."firstname"||','||"user"."lastname" as "fn" FROM 'Users' as "user" WHERE "user"."id"="UserEvent"."userId")`
+            `(SELECT "user"."id" ||','|| "user"."firstname"||','||"user"."lastname" as "fn" FROM "Users" as "user" WHERE "user"."id"="UserEvent"."userId")`
           ),
           "usersList",
         ],
         [
           Sequelize.literal(
-            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
+            `(SELECT "grouped"."organizerId" FROM "Groups" as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM "Events" as "event" WHERE "event"."id"="UserEvent"."eventId"))`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${req.userObject.id})`
+            `(SELECT "userG"."status" FROM "UserGroups" as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM "Events" as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${Number(
+              req.userObject.id
+            )})`
           ),
           "GroupStatus",
         ],
@@ -816,13 +820,13 @@ router.put("/events/:event_id/attendees", authMiddle, async (req, res) => {
 
         [
           Sequelize.literal(
-            `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId"))`
+            `(SELECT "grouped"."organizerId" FROM "Groups" as "grouped" WHERE "grouped"."id" in (SELECT "event"."groupId" FROM "Events" as "event" WHERE "event"."id"="UserEvent"."eventId"))`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM 'Events' as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${req.userObject.id})`
+            `(SELECT "userG"."status" FROM "UserGroups" as "userG" WHERE "userG"."groupId" in (SELECT "event"."groupId" FROM "Events" as "event" WHERE "event"."id"="UserEvent"."eventId") AND "userG"."userId" = ${req.userObject.id})`
           ),
           "GroupStatus",
         ],
@@ -959,7 +963,7 @@ router.delete(
           "id",
           [
             Sequelize.literal(
-              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" = ${Number(
+              `(SELECT "grouped"."organizerId" FROM "Groups" as "grouped" WHERE "grouped"."id" = ${Number(
                 req.params.group_id
               )})`
             ),
@@ -967,7 +971,7 @@ router.delete(
           ],
           [
             Sequelize.literal(
-              `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId"=${Number(
+              `(SELECT "userG"."status" FROM "UserGroups" as "userG" WHERE "userG"."groupId"=${Number(
                 req.params.group_id
               )} AND "userG"."userId" = ${req.userObject.id})`
             ),
@@ -1001,6 +1005,7 @@ router.delete(
     }
   }
 );
+
 router.delete(
   "/events/:event_id/images/:image_id",
   authMiddle,
@@ -1012,7 +1017,7 @@ router.delete(
           "id",
           [
             Sequelize.literal(
-              `(SELECT "grouped"."organizerId" FROM 'Groups' as "grouped" WHERE "grouped"."id" in (SELECT "groupId" from "Events" WHERE id = ${Number(
+              `(SELECT "grouped"."organizerId" FROM "Groups" as "grouped" WHERE "grouped"."id" in (SELECT "groupId" from "Events" WHERE id = ${Number(
                 req.params.event_id
               )}))`
             ),
@@ -1020,7 +1025,7 @@ router.delete(
           ],
           [
             Sequelize.literal(
-              `(SELECT "userG"."status" FROM 'UserGroups' as "userG" WHERE "userG"."groupId" in (SELECT "groupId" from "Events" WHERE id = ${Number(
+              `(SELECT "userG"."status" FROM "UserGroups" as "userG" WHERE "userG"."groupId" in (SELECT "groupId" from "Events" WHERE id = ${Number(
                 req.params.event_id
               )}) AND "userG"."userId" = ${req.userObject.id})`
             ),
@@ -1101,7 +1106,7 @@ router.get("/events", async (req, res) => {
         ],
         [
           Sequelize.literal(
-            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId")`
+            `(SELECT "id"||','||"city"||','||"state" as "f" from "Venues" WHERE "groupId" = "Event"."groupId" LIMIT 1)`
           ),
           "Venue",
         ],
