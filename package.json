@@ -2,10 +2,10 @@
   "scripts": {
     "dev": "cd server && nodemon app.js",
     "start": "cd server && node app.js",
-    "fix-render": "cd server && env node app.js",
+    "fix-render": "cd server && node app.js",
     "start-render": "cd server && env NODE_ENV=test node app.js",
     "start-renderhome": "cd server && env NODE_ENV=test2 node app.js",
-    "insall": "npm install && npm install sequelize-cli && npm install sqlite3 && env NODE_ENV=test npx sequelize db:migrate"
+    "insall": "npm install && npm install sequelize-cli && npm install sqlite3 -g && env NODE_ENV=test npx sequelize db:migrate"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
