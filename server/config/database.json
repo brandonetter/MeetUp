@@ -4,14 +4,14 @@
     "dialect": "sqlite"
   },
   "test": {
-    "use_env_variable": "postgres://meetup_user:5qugnIApMnL3xEihgOEU4YmUl0lbCnUl@dpg-cep7vp5a4991ihhqcoo0-a/meetup",
-    "url": "postgres://meetup_user:5qugnIApMnL3xEihgOEU4YmUl0lbCnUl@dpg-cep7vp5a4991ihhqcoo0-a/meetup",
+    "use_env_variable": "postgres://meetup_f6gd_user:520b890Jz0GKW0soKeF3v9YWqgDqBzGa@dpg-ceplbfha6gdkdn7u2h9g-a/meetup_f6gd",
+    "url": "postgres://meetup_f6gd_user:520b890Jz0GKW0soKeF3v9YWqgDqBzGa@dpg-ceplbfha6gdkdn7u2h9g-a/meetup_f6gd",
 
     "dialect": "postgres"
   },
   "test2": {
-    "use_env_variable": "postgresql://postgres:acbme1@localhost/postgres",
-    "url": "postgresql://postgres:acbme1@localhost/postgres",
+    "use_env_variable": "postgresql://postgres:pass@localhost/postgres",
+    "url": "postgresql://postgres:pass@localhost/postgres",
 
     "dialect": "postgres"
   }
