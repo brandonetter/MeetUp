@@ -103,7 +103,7 @@ information.
     ```json
     {
       "email": "john.smith@gmail.com",
-      "hash": "secret password"
+      "password": "secret password"
     }
     ```
 
@@ -171,10 +171,10 @@ user's information.
 
     ```json
     {
-      "firstName": "John",
-      "lastName": "Smith",
+      "firstname": "John",
+      "lastname": "Smith",
       "email": "john.smith@gmail.com",
-      "password": "secret password"
+      "hash": "secret password"
     }
     ```
 
