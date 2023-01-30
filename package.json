@@ -5,6 +5,8 @@
     "fix-render": "cd server && env NODE_ENV=development node app.js",
     "start-render": "cd server && env NODE_ENV=test node app.js",
     "start-renderhome": "cd server && env NODE_ENV=test2 node app.js",
+    "install-front": "cd front && npm install",
+    "build": "cd front && npm run build",
     "migratelocalpg": "env NODE_ENV=test2 npx sequelize db:migrate",
     "insall": "npm install && npm install sequelize-cli && env NODE_ENV=test npx sequelize db:migrate",
     "insall2": "npm install && npm install sequelize-cli && npm install sqlite3 && env NODE_ENV=development npx sequelize db:migrate"

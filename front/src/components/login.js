@@ -46,7 +46,7 @@ function Login() {
   useEffect(() => {
     async function restore() {
       return dispatch(sessionActions.sessionRestore()).catch(async (res) => {
-        const data = await res.json();
+        const data = await res?.json();
         if (data && data.errors) setErrors(data.errors);
       });
     }
@@ -112,13 +112,14 @@ function Login() {
       });
   };
   const handleSubmit = (e) => {
+    console.log("Asdasd");
     e.preventDefault();
     validate();
     if (!validationErrors.length)
       return dispatch(
         sessionActions.sessionLogin({ credential, password })
       ).catch(async (res) => {
-        const data = await res.json();
+        const data = await res?.json();
         if (data && data.errors) setErrors(data.errors);
       });
   };

@@ -1,5 +1,4 @@
-import { async } from "q";
-
+import Cookies from "js-cookie";
 const initialState = {
   user: null,
 };
@@ -18,9 +17,10 @@ export const sessionLogout = () => async (dispatch) => {
   dispatch(setSession({ user: null }));
 };
 export const sessionRestore = () => async (dispatch) => {
-  const response = await window.csrfFetch(`apiv1/auth`, {
+  const response = await window.fetch(`apiv1/auth`, {
     method: "GET",
   });
+  console.log("response?", response);
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession({ user: user }));
@@ -28,10 +28,20 @@ export const sessionRestore = () => async (dispatch) => {
 };
 
 export const sessionRegister = (userData) => async (dispatch) => {
-  const response = await window.csrfFetch(`apiv1/auth/new`, {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
+  let options = {};
+  options.method = "POST";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(userData);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`apiv1/auth/new`, options);
 
   if (response.ok) {
     const user = await response.json();
@@ -45,12 +55,23 @@ export const sessionRegister = (userData) => async (dispatch) => {
 export const sessionLogin = (userData) => async (dispatch) => {
   userData.email = userData.credential;
   delete userData.credential;
+  console.log("we even running bb?");
+  let options = {};
+  options.method = "POST";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(userData);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`apiv1/auth`, options);
 
-  const response = await window.csrfFetch(`apiv1/auth`, {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
-
+  console.log("response?", response);
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession(user));
