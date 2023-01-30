@@ -56,6 +56,7 @@ function Login() {
 
   const validate = () => {
     const errors = [];
+
     setValidationErrors([]);
     !credential.match(emailValid) && errors.push(emailError);
     !password.match(passwordValid) && errors.push(passwordError);
@@ -84,10 +85,12 @@ function Login() {
     setValidationErrors(errors);
   };
   useEffect(() => {
+    if (!showModal) return;
     if (!validationErrors.length) return;
     validate();
   }, [credential, password]);
   useEffect(() => {
+    if (!showRegisterModal) return;
     if (!validationErrors.length) return;
     registerValidate();
   }, [credential, password, fname, lname, uname]);
@@ -119,7 +122,7 @@ function Login() {
         })
       ).catch(async (res) => {
         const data = await res.json();
-        if (data && data.errors) setErrors(data.errors);
+        if (data && data.errors) setValidationErrors([...data.errors]);
       });
   };
   const handleSubmit = (e) => {
@@ -130,7 +133,9 @@ function Login() {
         sessionActions.sessionLogin({ credential, password })
       ).catch(async (res) => {
         const data = await res?.json();
-        if (data && data.errors) setErrors(data.errors);
+        if (data?.message === "Authentication required")
+          setValidationErrors(["Invalid credentials"]);
+        if (data && data.errors) setValidationErrors([...data.errors]);
       });
   };
   const menu = (

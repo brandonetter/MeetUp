@@ -20,7 +20,6 @@ export const sessionRestore = () => async (dispatch) => {
   const response = await window.fetch(`apiv1/auth`, {
     method: "GET",
   });
-  console.log("response?", response);
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession({ user: user }));
@@ -42,7 +41,7 @@ export const sessionRegister = (userData) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`apiv1/auth/new`, options);
-
+  if (response.status >= 400) throw response;
   if (response.ok) {
     const user = await response.json();
     let login = await dispatch(
@@ -71,7 +70,7 @@ export const sessionLogin = (userData) => async (dispatch) => {
   }
   const response = await window.fetch(`apiv1/auth`, options);
 
-  console.log("response?", response);
+  if (response.status >= 400) throw response;
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession(user));
