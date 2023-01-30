@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 for (let route in routes) {
   app.use("/" + route, routes[route]);
 }
-
+//
 if (process.env.NODE_ENV === "production") {
   const path = require("path");
   // Serve the frontend's index.html file at the root route
