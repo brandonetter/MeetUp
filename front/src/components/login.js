@@ -136,16 +136,18 @@ function Login() {
   const menu = (
     <ul className="menuList">
       <li onClick={logout}>Logout</li>
+      <li onClick={logout}>Logout</li>
+      <li onClick={logout}>Logout</li>
     </ul>
   );
   const style = { color: showMenu ? "#81bdf9" : "" };
   if (!hasRun) return <></>;
   if (sessionUser) {
     return (
-      <span className="user" onClick={toggleMenu} style={style}>
+      <div className="user" onClick={toggleMenu} style={style}>
         {sessionUser.username} <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
         {showMenu && menu}
-      </span>
+      </div>
     );
   }
   return (

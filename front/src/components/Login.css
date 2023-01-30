@@ -39,29 +39,29 @@ input {
   box-sizing: border-box;
 }
 .user {
-  width: 100%;
-  display: block;
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
   cursor: pointer;
   user-select: none;
 }
 .menuList {
   position: absolute;
   opacity: 0.9;
-  transform: translate(0, -50%);
-  right: 0px;
+  transform: translate(-25%, 10%);
   color: #414141;
   animation: menuList 0.2s ease-in-out;
 }
 @keyframes menuList {
   0% {
     opacity: 0;
-    transform: translate(0, -100%);
+    transform: translate(-25%, -50%);
   }
   100% {
     opacity: 0.9;
   }
 }
-.menuList:hover {
+.menuList li:hover {
   color: #9fc2e6;
 }
 .menuList li {
