@@ -1,0 +1,16 @@
+.HeaderDiv {
+  overflow: hidden;
+  width: 95vw;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
+    Helvetica, Arial, sans-serif;
+  font-size: 1.2rem;
+  color: #414141;
+}
+.HeaderDiv img {
+  overflow: hidden;
+  width: 120px;
+  height: 100%;
+}

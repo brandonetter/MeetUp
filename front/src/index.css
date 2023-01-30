@@ -1,0 +1,42 @@
+body {
+  background-color: #f5f5f5;
+  overflow-x: hidden;
+}
+.background {
+  z-index: -10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 200vh;
+  overflow: hidden;
+  pointer-events: none;
+}
+.redBlob {
+  position: absolute;
+  opacity: 0.5;
+  width: 40%;
+  top: 26%;
+  transform: translateX(190%) rotate(30deg);
+  pointer-events: none;
+}
+
+.blueBlob {
+  position: absolute;
+  opacity: 0.5;
+  left: 100%;
+  top: -10%;
+  transform: translateX(-100%);
+  width: 50vw;
+  max-width: 600px;
+  pointer-events: none;
+}
+.yellowBlob {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.5;
+  width: 80%;
+  left: 58%;
+  top: 4%;
+  transform: translateX(-90%) rotate(30deg);
+}
