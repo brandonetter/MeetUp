@@ -62,6 +62,17 @@ function Login() {
 
     setValidationErrors(errors);
   };
+  const loginDemoUser = () => {
+    return dispatch(
+      sessionActions.sessionLogin({
+        credential: "demo@demo.com",
+        password: "password",
+      })
+    ).catch(async (res) => {
+      const data = await res?.json();
+      if (data && data.errors) setErrors(data.errors);
+    });
+  };
   const registerValidate = () => {
     const errors = [];
     setValidationErrors([]);
@@ -112,7 +123,6 @@ function Login() {
       });
   };
   const handleSubmit = (e) => {
-    console.log("Asdasd");
     e.preventDefault();
     validate();
     if (!validationErrors.length)
@@ -145,6 +155,9 @@ function Login() {
       </span>{" "}
       <span className="loginButton" onClick={toggleRegisterModal}>
         <FontAwesomeIcon icon={faUser} /> Register
+      </span>
+      <span className="loginButton" onClick={loginDemoUser}>
+        <FontAwesomeIcon icon={faUser} /> Demo
       </span>
       <div className={showModal ? "modalShow modal" : "modal"}>
         <div className="modalContent" ref={modalContent}>

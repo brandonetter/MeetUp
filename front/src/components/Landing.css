@@ -18,12 +18,13 @@
   height: 30vh;
 }
 .imageHolder img {
-  filter: grayscale(35%);
+  filter: grayscale(45%);
 
   height: 80%;
   min-height: 50%;
   border-radius: 10px;
   transition: filter 0.5s;
+  box-shadow: 0px 4px 7px rgba(0, 0, 0, 0.798);
 }
 h3 {
   font-size: 1.5rem;
