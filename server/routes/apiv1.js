@@ -59,6 +59,7 @@ async function softAuthMiddle(req, res, next) {
   }
   next();
 }
+
 router.post("/auth/new", async (req, res) => {
   try {
     ob = t.tidy(User, req.body);
@@ -69,6 +70,7 @@ router.post("/auth/new", async (req, res) => {
     res.json(t.tidyError(e, res, "User"));
   }
 });
+
 router.get("/auth", authMiddle, async (req, res) => {
   res.json(req.userObject);
 });
@@ -147,6 +149,7 @@ router.post("/groups", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
+
 router.post("/groups/:group_id/images", authMiddle, async (req, res) => {
   try {
     let ob = t.tidy(Image, req.body);
@@ -158,6 +161,7 @@ router.post("/groups/:group_id/images", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
+
 router.put("/groups/:group_id", authMiddle, async (req, res) => {
   try {
     let group = await Group.findOne({
@@ -1133,7 +1137,7 @@ router.get("/events", async (req, res) => {
         state: g[2],
       };
     });
-    res.json(events);
+    res.json({ Events: events });
   } catch (e) {
     res.json(e);
   }

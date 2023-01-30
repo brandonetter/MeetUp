@@ -1,0 +1,69 @@
+.main {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  margin-top: 10vh;
+  align-items: center;
+  flex-direction: column;
+  font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
+    Helvetica, Arial, sans-serif;
+}
+.imageHolder {
+  z-index: 0;
+  margin-top: 10vh;
+  display: flex;
+  justify-content: space-around;
+  width: 60%;
+  height: 30vh;
+}
+.imageHolder img {
+  filter: grayscale(35%);
+
+  height: 80%;
+  min-height: 50%;
+  border-radius: 10px;
+  transition: filter 0.5s;
+}
+h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #57a7c2;
+  padding: 0px;
+  line-height: 1.3ch;
+  margin-bottom: 20px;
+}
+.imageHolder img:hover {
+  filter: grayscale(0%);
+  cursor: pointer;
+}
+.main h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1c1c1c;
+  padding: 0px;
+  line-height: 1.3ch;
+  margin-bottom: 20px;
+}
+.main div {
+  padding-right: 40px;
+}
+.main div span {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1c1c1c;
+}
+.headerCenter {
+  display: flex;
+  width: 65vw;
+  justify-content: space-between;
+  align-items: top;
+  flex-direction: row;
+}
+.headerCenter img {
+  vertical-align: top;
+  padding: 0px;
+  width: 50vw;
+  min-width: 420px;
+  height: 100%;
+}
