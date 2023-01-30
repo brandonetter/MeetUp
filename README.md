@@ -2,8 +2,11 @@
 # Poor Attempt At A Website Clone (meetup)
 
 ## Database Schema Design
-
+Live link: https://haskjdhashdasd9.onrender.com/
 ![WIP](https://user-images.githubusercontent.com/4108484/205449922-f89a24a7-ae2a-47b6-8016-a418a713f0bc.png?asd)
+
+![image](https://user-images.githubusercontent.com/4108484/215374961-6cf6ccee-3481-45e0-a616-68f2d7fd7cb5.png)
+
 
 ## API Documentation
 
