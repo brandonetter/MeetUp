@@ -9,11 +9,12 @@ import {
   faCircleXmark,
   faUser,
   faRightToBracket,
+  faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Login.css";
 import { valid } from "semver";
 
-library.add(faCircleXmark);
+library.add(faCircleXmark, faCircleUser);
 function Login() {
   const emailValid = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   const passwordValid = /^[a-zA-Z0-9]{8,}$/;
@@ -141,8 +142,6 @@ function Login() {
   const menu = (
     <ul className="menuList">
       <li onClick={logout}>Logout</li>
-      <li onClick={logout}>Logout</li>
-      <li onClick={logout}>Logout</li>
     </ul>
   );
   const style = { color: showMenu ? "#81bdf9" : "" };
@@ -150,7 +149,7 @@ function Login() {
   if (sessionUser) {
     return (
       <div className="user" onClick={toggleMenu} style={style}>
-        {sessionUser.username} <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faCircleUser}></FontAwesomeIcon>
         {showMenu && menu}
       </div>
     );

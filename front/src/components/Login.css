@@ -47,15 +47,17 @@ input {
 }
 .menuList {
   position: absolute;
+  right: 0px;
+  z-index: 1;
   opacity: 0.9;
-  transform: translate(-25%, 10%);
+  transform: translate(1.8vw, 70%);
   color: #414141;
   animation: menuList 0.2s ease-in-out;
 }
 @keyframes menuList {
   0% {
     opacity: 0;
-    transform: translate(-25%, -50%);
+    transform: translate(1.8vw, -20%);
   }
   100% {
     opacity: 0.9;
@@ -70,6 +72,7 @@ input {
   border-radius: 5px;
   width: 100px;
   text-align: center;
+  font-size: 1.2rem;
   padding: 5px;
   list-style: none;
 }
@@ -78,13 +81,17 @@ input {
 }
 button {
   width: 100%;
-  background-color: #81bdf9;
+  background-color: #4ca3fb;
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+button:hover {
+  background-color: #81bdf9;
+  color: white;
 }
 .modalContent {
   background-color: #fefefe;
