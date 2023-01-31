@@ -31,7 +31,7 @@ function Header() {
   return (
     <div className={"HeaderDiv " + (location == "/" ? "" : "loggedIn")}>
       <img src={logo} alt="logo" />
-      {location == "/dashboard" && <SearchBar></SearchBar>}
+      {location == "/dashboard" && <SearchBar type="Groups"></SearchBar>}
       <div className="menu">
         {location == "/dashboard" && (
           <>

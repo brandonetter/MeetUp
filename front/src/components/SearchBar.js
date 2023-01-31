@@ -7,7 +7,7 @@ import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, useJSApiLoader } from "@react-google-maps/api";
 library.add(faMagnifyingGlass);
-function SearchBar() {
+function SearchBar({ type }) {
   const [location, setLocation] = useState("Location");
   useEffect(() => {
     async function getSelection() {
@@ -49,7 +49,7 @@ function SearchBar() {
   }, []);
   return (
     <div className="singleBar">
-      <input className="sb1" placeholder="Search Groups"></input>
+      <input className="sb1" placeholder={`Search ${type}`}></input>
       <input
         className="sb2"
         placeholder={location}

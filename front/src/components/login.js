@@ -12,7 +12,6 @@ import {
   faCircleUser,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Login.css";
-import { valid } from "semver";
 
 library.add(faCircleXmark, faCircleUser);
 function Login() {
