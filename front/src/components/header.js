@@ -10,6 +10,8 @@ import {
   faBell,
   faComments,
   faCircleUser,
+  faPersonCirclePlus,
+  faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import Register from "./Register";
 import Login from "./login";
@@ -32,16 +34,16 @@ function Header() {
     <div className={"HeaderDiv " + (location == "/" ? "" : "loggedIn")}>
       <img src={logo} alt="logo" />
       {location == "/dashboard" && <SearchBar type="Groups"></SearchBar>}
-      <div className="menu">
+      <div className="menuHeader">
         {location == "/dashboard" && (
           <>
             <span className="iconButton">
-              <FontAwesomeIcon icon={faComments}></FontAwesomeIcon>
-              Messages
+              <FontAwesomeIcon icon={faLocationDot}></FontAwesomeIcon>
+              <span>Add Event</span>
             </span>
             <span className="iconButton">
-              <FontAwesomeIcon icon={faBell}></FontAwesomeIcon>
-              Notifications
+              <FontAwesomeIcon icon={faPersonCirclePlus}></FontAwesomeIcon>
+              <span>Add Group</span>
             </span>
           </>
         )}

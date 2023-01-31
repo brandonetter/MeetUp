@@ -13,7 +13,7 @@ function Calender() {
   const [days, setDays] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   //Object containing Months and 0 indexed numbers
-
+  const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const toNum = {
     January: 0,
     February: 1,
@@ -78,10 +78,18 @@ function Calender() {
         days.push("");
       }
       while (date.getMonth() === month) {
-        days.push(new Date(date).getDate());
+        if (
+          date.getDate() === new Date().getDate() &&
+          date.getMonth() === new Date().getMonth() &&
+          date.getFullYear() === new Date().getFullYear()
+        ) {
+          days.push([date.getDate(), "today"]);
+        } else {
+          days.push(new Date(date).getDate());
+        }
         date.setDate(date.getDate() + 1);
       }
-      setDays(days);
+      setDays([...dayLabels, ...days]);
       return days;
     }
   }, [month]);
@@ -99,9 +107,15 @@ function Calender() {
         </button>
       </div>
       <div className="calGrid">
-        {days.map((day) => (
-          <div className="day">{day}</div>
-        ))}
+        {days.map((day) =>
+          dayLabels.includes(day) ? (
+            <div className="dayLabel">{day}</div>
+          ) : day?.[1] ? (
+            <div className={day[1]}>{day[0]}</div>
+          ) : (
+            <div className="day">{day}</div>
+          )
+        )}
       </div>
     </div>
   );

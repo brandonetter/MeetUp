@@ -19,10 +19,7 @@ function App() {
   const [redir, setRedir] = useState("");
   useEffect(() => {
     if (sessionUser) {
-      console.log("wooo");
-      // history.push("/dashboard");
       setRedir(<Redirect to="/dashboard"></Redirect>);
-      // window.history.pushState({}, null, "/dashboard");
     } else {
       setRedir(<Redirect to="/"></Redirect>);
     }

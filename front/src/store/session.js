@@ -54,7 +54,6 @@ export const sessionRegister = (userData) => async (dispatch) => {
 export const sessionLogin = (userData) => async (dispatch) => {
   userData.email = userData.credential;
   delete userData.credential;
-  console.log("we even running bb?");
   let options = {};
   options.method = "POST";
   // set options.headers to an empty object if there is no headers
@@ -81,7 +80,6 @@ const sessionReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET:
       state = action.payload;
-      console.log(state);
       return state;
 
     case CLEAR:

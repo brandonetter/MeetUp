@@ -1,6 +1,6 @@
 .singleBar {
   position: relative;
-  transform: translateX(-7vw);
+  transform: translateX(-13vw);
   display: flex;
   flex-direction: row;
   width: 30%;
@@ -19,6 +19,11 @@ input {
   border-radius: 0px 0px 0px 0px;
   border: 2px solid rgba(0, 0, 0, 0.714);
   border-left: 0px;
+}
+.sbForm {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .sb3 {

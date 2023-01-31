@@ -3,12 +3,18 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import * as sessionActions from "../store/session";
+import * as searchActions from "../store/search";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, useJSApiLoader } from "@react-google-maps/api";
+
 library.add(faMagnifyingGlass);
 function SearchBar({ type }) {
+  const search = useSelector((state) => state.search);
+  const dispatch = useDispatch();
   const [location, setLocation] = useState("Location");
+  useEffect(() => {
+    dispatch(searchActions.setLocation(location));
+  }, [location]);
   useEffect(() => {
     async function getSelection() {
       if (navigator.geolocation) {
@@ -47,17 +53,19 @@ function SearchBar({ type }) {
     }
     getSelection();
   }, []);
+  const setLoc = (e) => {
+    e.preventDefault();
+    setLocation(document.getElementsByClassName("sb2")[0].value);
+  };
   return (
     <div className="singleBar">
-      <input className="sb1" placeholder={`Search ${type}`}></input>
-      <input
-        className="sb2"
-        placeholder={location}
-        onChange={(e) => setLocation(e.target.value)}
-      ></input>
-      <button className="sb3">
-        <FontAwesomeIcon icon={faMagnifyingGlass}></FontAwesomeIcon>
-      </button>
+      <form onSubmit={setLoc} className="sbForm">
+        <input className="sb1" placeholder={`Search ${type}`}></input>
+        <input className="sb2" placeholder={location}></input>
+        <button className="sb3" onClick={setLoc}>
+          <FontAwesomeIcon icon={faMagnifyingGlass}></FontAwesomeIcon>
+        </button>
+      </form>
     </div>
   );
 }

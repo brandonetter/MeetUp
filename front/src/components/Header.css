@@ -20,6 +20,7 @@
 }
 .HeaderDiv img {
   overflow: hidden;
+  margin: 0 0 0 10px;
   width: 120px;
   height: 100%;
 }
@@ -27,11 +28,12 @@
   height: 100%;
   width: min(175px, 10vw);
 }
-.menu {
+.menuHeader {
   display: flex;
-  justify-content: space-between;
+  right: 0px;
+  justify-content: flex-end;
   align-items: center;
-  width: fit-content;
+  width: 27vw;
   height: 100%;
 }
 .loggedIn .menu {
@@ -40,6 +42,7 @@
 }
 .iconButton {
   display: flex;
+  margin: 0 3vw;
   flex-direction: column;
   font-size: max(1.3vw, 1rem);
   justify-content: center;
@@ -51,11 +54,19 @@
   transition: 0.2s;
   user-select: none;
 }
+.iconButton span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  word-wrap: none;
+  width: 70px;
+}
 .iconButton:hover {
   color: #81bdf9;
 }
 .loggedIn .userButton {
   display: flex;
+  margin: 0 2.5rem;
   position: relative;
   flex-direction: column;
   font-size: max(2.3vw, 2.2rem);

@@ -104,8 +104,11 @@ button:hover {
   max-width: 350px;
 }
 .modalShow {
+  position: absolute;
+  left: 0;
   opacity: 1;
   top: -10vh;
+
   pointer-events: auto;
 }
 .loginButton {
