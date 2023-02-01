@@ -93,7 +93,7 @@
 .headerModalContent {
   position: relative;
   width: 50vw;
-  height: 60vh;
+  height: fit-content;
   background-color: white;
   border-radius: 10px;
   display: flex;
@@ -142,4 +142,25 @@ textarea {
 }
 .small {
   width: 100%;
+}
+.select {
+  width: 15%;
+  min-width: 50px;
+  height: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid #1d1d1d6e;
+  border-radius: 5px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.prevImage {
+  width: 100% !important;
+  height: 180px !important;
 }

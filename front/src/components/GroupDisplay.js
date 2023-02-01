@@ -30,7 +30,7 @@ function GroupDisplay() {
   });
   const loadingCards = () => {
     let cards = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       cards.push(
         <div>
           <div className="groupCard">

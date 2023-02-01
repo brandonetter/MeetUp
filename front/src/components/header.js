@@ -17,7 +17,7 @@ import Login from "./login";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 library.add(
   faUser,
   faRightToBracket,
@@ -33,7 +33,64 @@ function Header() {
   const sessionUser = useSelector((state) => state.session.user);
   const [addGroupModal, setAddGroupModal] = useState(false);
   const [addEventModal, setAddEventModal] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
   const location = useLocation().pathname;
+  const listOfUSStates = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+  ];
+
+  const showFile = (e) => {
+    setCurrentImage(URL.createObjectURL(e.target.files[0]));
+  };
   const toggleGroupModal = () => {
     window.scrollTo(0, 0);
     setScroll(addGroupModal);
@@ -87,15 +144,40 @@ function Header() {
               <input className="headerModalInput"></input>
               <label className="headerModalLabel">Group Description</label>
               <textarea className="headerModalInput"></textarea>
+              <label className="headerModalLabel">Group Type</label>
+              <select name="type" className="headerModalInput select">
+                <option value="online">Online</option>
+                <option value="in-person">In-Person</option>
+              </select>
               <div className="headerModalGroup">
                 <div className="small">
                   <label className="headerModalLabel">Group Image</label>
-                  <input className="headerModalInput"></input>{" "}
+                  <input
+                    type="file"
+                    className="headerModalInput"
+                    onChange={showFile}
+                  ></input>
                 </div>
                 <div className="small">
-                  <label className="headerModalLabel">Location</label>
-                  <input className="headerModalInput"></input>
+                  {currentImage && (
+                    <img
+                      src={currentImage}
+                      alt="groupImage"
+                      className="prevImage"
+                    ></img>
+                  )}
                 </div>
+              </div>
+
+              <label className="headerModalLabel">Location</label>
+              <div className="small row">
+                <select name="state" className="headerModalInput select">
+                  {listOfUSStates.map((state) => (
+                    <option value={state}>{state}</option>
+                  ))}
+                </select>
+
+                <input className="headerModalInput" placeholder="City"></input>
               </div>
               <button className="headerModalButton">Add Group</button>
             </form>
