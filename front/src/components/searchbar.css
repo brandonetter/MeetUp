@@ -1,0 +1,38 @@
+.singleBar {
+  position: relative;
+  transform: translateX(-13vw);
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  max-width: 550px;
+}
+input {
+  font-size: 1.1rem;
+  padding: 0.4rem;
+}
+.sb1 {
+  border-radius: 5px 0px 0px 5px;
+  border: 2px solid rgba(0, 0, 0, 0.714);
+  border-right: 1px solid black;
+}
+.sb2 {
+  border-radius: 0px 0px 0px 0px;
+  border: 2px solid rgba(0, 0, 0, 0.714);
+  border-left: 0px;
+}
+.sbForm {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.sb3 {
+  border-radius: 0px 5px 5px 0px;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 0;
+  background-color: #f65c5c;
+  border: 2px solid rgba(0, 0, 0, 0.714);
+  border-left: 0px;
+  width: 20%;
+}

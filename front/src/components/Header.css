@@ -1,16 +1,166 @@
 .HeaderDiv {
-  overflow: hidden;
+  overflow: show;
   width: 95vw;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
+
   font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
     Helvetica, Arial, sans-serif;
   font-size: 1.2rem;
   color: #414141;
 }
+.loggedIn {
+  height: 6vh;
+  width: 100vw;
+  background-color: rgb(249, 249, 249);
+  position: relative;
+  transform: translate(-0.4vw, -15%);
+  border-bottom: 1px solid #1d1d1d6e;
+}
 .HeaderDiv img {
   overflow: hidden;
+  margin: 0 0 0 10px;
   width: 120px;
   height: 100%;
+}
+.loggedIn img {
+  height: 100%;
+  width: min(175px, 10vw);
+}
+.menuHeader {
+  display: flex;
+  right: 0px;
+  justify-content: flex-end;
+  align-items: center;
+  width: 27vw;
+  height: 100%;
+}
+.loggedIn .menu {
+  justify-content: space-around;
+  width: 45vw;
+}
+.iconButton {
+  display: flex;
+  margin: 0 3vw;
+  flex-direction: column;
+  font-size: max(1.3vw, 1rem);
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+  user-select: none;
+}
+.iconButton span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  word-wrap: none;
+  width: 70px;
+}
+.iconButton:hover {
+  color: #81bdf9;
+}
+.loggedIn .userButton {
+  display: flex;
+  margin: 0 2.5rem;
+  position: relative;
+  flex-direction: column;
+  font-size: max(2.3vw, 2.2rem);
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.headerModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.headerModalContent {
+  position: relative;
+  width: 50vw;
+  height: fit-content;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+.headerModalTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+.headerModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 10%;
+}
+.headerModalInput {
+  width: 100%;
+  height: 10%;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid #1d1d1d6e;
+  border-radius: 5px;
+}
+textarea {
+  resize: none;
+  width: 300px;
+  box-sizing: border-box;
+  height: 100px !important;
+}
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+.headerModalGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.small {
+  width: 100%;
+}
+.select {
+  width: 15%;
+  min-width: 50px;
+  height: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid #1d1d1d6e;
+  border-radius: 5px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.prevImage {
+  width: 100% !important;
+  height: 180px !important;
 }

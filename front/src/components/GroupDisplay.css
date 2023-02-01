@@ -1,0 +1,48 @@
+.groupDisplayHeader {
+  padding: 10px;
+  font-size: 1.2em;
+  color: rgb(59, 59, 59);
+  border-bottom: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 80%;
+}
+.groupCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: left;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.558);
+  border-radius: 5px;
+  margin-top: 10px;
+  padding-top: 15px;
+  margin-bottom: 10px;
+  width: 60%;
+  min-width: 400px;
+  height: 275px;
+}
+.groupCardImage img {
+  width: 200px;
+  height: 175px;
+  border-radius: 10%;
+  margin-right: 10px;
+}
+.groupCardDescription {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  margin-bottom: 20px;
+}
+.groupCardTitle {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.groupCardLocation {
+  color: rgb(59, 59, 59);
+  font-size: 1em;
+  margin-bottom: 10px;
+}

@@ -20,7 +20,6 @@ export const sessionRestore = () => async (dispatch) => {
   const response = await window.fetch(`apiv1/auth`, {
     method: "GET",
   });
-  console.log("response?", response);
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession({ user: user }));
@@ -42,7 +41,7 @@ export const sessionRegister = (userData) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`apiv1/auth/new`, options);
-
+  if (response.status >= 400) throw response;
   if (response.ok) {
     const user = await response.json();
     let login = await dispatch(
@@ -55,7 +54,6 @@ export const sessionRegister = (userData) => async (dispatch) => {
 export const sessionLogin = (userData) => async (dispatch) => {
   userData.email = userData.credential;
   delete userData.credential;
-  console.log("we even running bb?");
   let options = {};
   options.method = "POST";
   // set options.headers to an empty object if there is no headers
@@ -71,7 +69,7 @@ export const sessionLogin = (userData) => async (dispatch) => {
   }
   const response = await window.fetch(`apiv1/auth`, options);
 
-  console.log("response?", response);
+  if (response.status >= 400) throw response;
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession(user));
@@ -82,7 +80,6 @@ const sessionReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET:
       state = action.payload;
-      console.log(state);
       return state;
 
     case CLEAR:
