@@ -55,7 +55,10 @@ function SearchBar({ type }) {
   }, []);
   const setLoc = (e) => {
     e.preventDefault();
-    setLocation(document.getElementsByClassName("sb2")[0].value);
+    // setLocation(document.getElementsByClassName("sb2")[0].value);
+    dispatch(
+      searchActions.setLocation(document.getElementsByClassName("sb2")[0].value)
+    );
   };
   return (
     <div className="singleBar">

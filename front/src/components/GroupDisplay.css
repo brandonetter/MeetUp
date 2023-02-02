@@ -7,7 +7,13 @@
   margin-bottom: 10px;
   width: 80%;
 }
+.groupCard:hover:not(.expand) {
+  background-color: rgba(199, 229, 249, 0.8);
+  cursor: pointer;
+}
+
 .groupCard {
+  user-select: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -23,11 +29,75 @@
   min-width: 400px;
   height: 275px;
 }
+.dimmer {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease;
+}
+.expand {
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  z-index: 10 !important;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  user-select: auto;
+}
+.groupCard.expand > .groupCardImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  margin-right: 0;
+}
 .groupCardImage img {
   width: 200px;
   height: 175px;
   border-radius: 10%;
   margin-right: 10px;
+}
+.groupCard.expand > .groupCardHeader {
+  margin-top: 0px;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  margin-right: 0;
+}
+.groupCard.expand > .groupCardHeader > .groupCardDescription {
+  width: 100%;
+  height: 40%;
+  border-radius: 0;
+  margin-right: 0;
+}
+.groupX {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  color: rgb(59, 59, 59);
+  cursor: pointer;
+  margin: 10px;
+}
+.groupOpen {
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  color: rgba(59, 59, 59, 0.347);
+  cursor: pointer;
+  margin: 10px;
 }
 .groupCardDescription {
   overflow: hidden;

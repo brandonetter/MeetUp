@@ -18,17 +18,38 @@ function GroupDisplay() {
   const [loc, setLoc] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    store.subscribe(() => {
+      let state = store.getState();
+      setLoading(true);
+      setLoc(state.search.location);
+      let preRes = state.search.results?.Groups;
+      // get state from location 'city,ST'
+      let stateFromLoc = state.search.location.split(",")?.[1];
+      let cityFromLoc = state.search.location.split(",")?.[0];
+      if (stateFromLoc === undefined) stateFromLoc = state.search.location;
+      if (cityFromLoc === undefined) cityFromLoc = state.search.location;
+      //filter preRes to only include groups that have the same state or city
+      stateFromLoc = stateFromLoc.toUpperCase();
+      stateFromLoc = stateFromLoc.trim();
+      if (state.search.location !== "") {
+        if (preRes) {
+          preRes = preRes.filter((group) => {
+            return group.state === stateFromLoc || group.city === cityFromLoc;
+          });
+        }
+      } else {
+        //setLoc("Anywhere");
+      }
+      setResults(preRes);
+      clearTimeout(timeoutInt);
+      timeoutInt = setTimeout(() => {
+        setLoading(false);
+      }, 600);
+    });
+  }, []);
   let timeoutInt = 0;
-  store.subscribe(() => {
-    let state = store.getState();
-    setLoading(true);
-    setLoc(state.search.location);
-    setResults(state.search.results?.Groups);
-    clearTimeout(timeoutInt);
-    timeoutInt = setTimeout(() => {
-      setLoading(false);
-    }, 700);
-  });
+
   const loadingCards = () => {
     let cards = [];
     for (let i = 0; i < 3; i++) {
@@ -68,7 +89,9 @@ function GroupDisplay() {
 
   return (
     <div>
-      <h3 className="groupDisplayHeader">Groups Near {loc}</h3>
+      <h3 className="groupDisplayHeader">
+        Groups Near {loc ? loc : "Anywhere"}
+      </h3>
       {loading && loadingCards()}
 
       {!loading && results?.map((group) => <div>{genCard(group)}</div>)}
