@@ -204,11 +204,13 @@ function Header() {
 
                 <input className="headerModalInput" placeholder="City"></input>
               </div>
-              <input
+              <button
                 type="submit"
                 className="headerModalButton"
                 value="Add Group"
-              />
+              >
+                Add group
+              </button>
             </form>
           </div>
         </div>

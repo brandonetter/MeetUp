@@ -10,6 +10,7 @@ import * as searchActions from "../store/search";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { GoogleMap, useJSApiLoader } from "@react-google-maps/api";
 import "./GroupDisplay.css";
+import GroupCard from "./GroupCard";
 function GroupDisplay() {
   const dispatch = useDispatch();
   const location = useSelector((state) => state.search);
@@ -55,22 +56,7 @@ function GroupDisplay() {
     const img = group?.preview
       ? "imagebin/" + group?.preview
       : [placeholder, placeholder2, placeholder3][~~(Math.random() * 3)];
-    return (
-      <div className="groupCard">
-        <div className="groupCardImage">
-          <img src={img} />
-        </div>
-        <div className="groupCardHeader">
-          <div className="groupCardTitle">{group?.name}</div>
-          <div className="groupCardLocation">
-            {group?.city},{group?.state}
-          </div>
-
-          <div className="groupCardDescription">{group?.about}</div>
-          <div className="groupCardMembers">{group?.numMembers} Members</div>
-        </div>
-      </div>
-    );
+    return <GroupCard img={img} group={group} />;
   };
 
   useEffect(() => {
