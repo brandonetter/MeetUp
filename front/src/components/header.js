@@ -35,6 +35,7 @@ function Header() {
   const [addEventModal, setAddEventModal] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const location = useLocation().pathname;
+  const dispatch = useDispatch();
   const listOfUSStates = [
     "AL",
     "AK",
@@ -87,6 +88,30 @@ function Header() {
     "WI",
     "WY",
   ];
+  const submitGroup = async (e) => {
+    e.preventDefault();
+    const imageUpload = e.target[3]?.files[0];
+    const formData = {};
+    console.log(imageUpload);
+    if (imageUpload) {
+      //send image to /apiv1/uploadImage
+      //get the url back
+      //add the url to the form data
+      const response = await dispatch(sessionActions.uploadImage(imageUpload));
+      formData.preview = response.url;
+
+      //dispatch(sessionActions.addGroup(formData));
+    }
+    formData.about = e?.target[1].value;
+    formData.name = e?.target[0].value;
+    formData.type = e?.target[2].value;
+    formData.state = e?.target[4].value;
+    formData.private = "false";
+    formData.city = e?.target[5].value;
+    dispatch(sessionActions.addGroup(formData));
+
+    toggleGroupModal();
+  };
 
   const showFile = (e) => {
     setCurrentImage(URL.createObjectURL(e.target.files[0]));
@@ -139,15 +164,15 @@ function Header() {
                 ></FontAwesomeIcon>
               </span>
             </div>
-            <form className="headerModalForm">
+            <form className="headerModalForm" onSubmit={submitGroup}>
               <label className="headerModalLabel">Group Name</label>
               <input className="headerModalInput"></input>
               <label className="headerModalLabel">Group Description</label>
               <textarea className="headerModalInput"></textarea>
               <label className="headerModalLabel">Group Type</label>
               <select name="type" className="headerModalInput select">
-                <option value="online">Online</option>
-                <option value="in-person">In-Person</option>
+                <option value="Online">Online</option>
+                <option value="In person">In Person</option>
               </select>
               <div className="headerModalGroup">
                 <div className="small">
@@ -179,7 +204,11 @@ function Header() {
 
                 <input className="headerModalInput" placeholder="City"></input>
               </div>
-              <button className="headerModalButton">Add Group</button>
+              <input
+                type="submit"
+                className="headerModalButton"
+                value="Add Group"
+              />
             </form>
           </div>
         </div>
