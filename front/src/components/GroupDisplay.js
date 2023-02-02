@@ -53,7 +53,7 @@ function GroupDisplay() {
 
   const genCard = (group) => {
     const img = group?.preview
-      ? "images/" + group?.preview
+      ? "imagebin/" + group?.preview
       : [placeholder, placeholder2, placeholder3][~~(Math.random() * 3)];
     return (
       <div className="groupCard">

@@ -10,7 +10,7 @@ var csrf = require("csurf");
 const multer = require("multer");
 const imageStorage = multer.diskStorage({
   // Destination to store image
-  destination: "../front/public/images",
+  destination: "../public/images",
   filename: (req, file, cb) => {
     cb(
       null,
@@ -71,7 +71,7 @@ app.get("/", (req, res) => {
 
 // Serve the static assets in the frontend's build folder
 app.use(express.static(path.resolve("../front/build")));
-
+app.use("/imagebin", express.static(path.resolve("../public/images")));
 // Serve the frontend's index.html file at all other routes NOT starting with /api
 app.get(/^(?!\/?api).*/, (req, res) => {
   res.cookie("XSRF-TOKEN", req.csrfToken());

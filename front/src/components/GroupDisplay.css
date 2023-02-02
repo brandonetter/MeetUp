@@ -34,6 +34,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
+  word-break: break-word;
   margin-bottom: 20px;
 }
 .groupCardTitle {
