@@ -109,7 +109,7 @@ function Calender() {
       <div className="calGrid">
         {days.map((day) =>
           dayLabels.includes(day) ? (
-            <div className="dayLabel"></div>
+            <div className="dayLabel">{day}</div>
           ) : day?.[1] ? (
             <div className={day[1]}>{day[0]}</div>
           ) : (
