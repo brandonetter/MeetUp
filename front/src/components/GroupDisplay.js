@@ -77,7 +77,7 @@ function GroupDisplay() {
     const img = group?.preview
       ? "imagebin/" + group?.preview
       : [placeholder, placeholder2, placeholder3][~~(Math.random() * 3)];
-    return <GroupCard img={img} group={group} />;
+    return <GroupCard img={img} group={group} location={loc} />;
   };
 
   useEffect(() => {

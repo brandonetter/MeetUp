@@ -24,6 +24,16 @@ export const setLocation = (location) => ({
 const clearState = () => ({
   type: CLEAR,
 });
+export const getGroupById = (id) => async (dispatch) => {
+  const response = await window.fetch(`apiv1/groups/${id}`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const group = await response.json();
+    return group;
+  }
+};
+
 export const getAllGroups = () => async (dispatch) => {
   const response = await window.fetch(`apiv1/groups/all`, {
     method: "GET",
