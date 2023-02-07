@@ -24,8 +24,47 @@ export const setLocation = (location) => ({
 const clearState = () => ({
   type: CLEAR,
 });
+export const deleteGroup = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${id}`, options);
+  if (response.ok) {
+    const group = await response.json();
+    return group;
+  }
+};
+export const updateGroup = (groupData, id) => async (dispatch) => {
+  let options = {};
+  options.method = "PUT";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(groupData);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${id}`, options);
+  if (response.ok) {
+    const group = await response.json();
+    return group;
+  }
+};
 export const getGroupById = (id) => async (dispatch) => {
-  const response = await window.fetch(`apiv1/groups/${id}`, {
+  const response = await window.fetch(`/apiv1/groups/${id}`, {
     method: "GET",
   });
   if (response.ok) {

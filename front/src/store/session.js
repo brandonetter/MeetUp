@@ -17,7 +17,7 @@ export const sessionLogout = () => async (dispatch) => {
   dispatch(setSession({ user: null }));
 };
 export const sessionRestore = () => async (dispatch) => {
-  const response = await window.fetch(`apiv1/auth`, {
+  const response = await window.fetch(`/apiv1/auth`, {
     method: "GET",
   });
   if (response.ok) {

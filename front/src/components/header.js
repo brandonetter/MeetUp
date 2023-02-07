@@ -17,7 +17,15 @@ import Login from "./login";
 import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
+
+import {
+  GoogleMap,
+  useJSApiLoader,
+  LoadScript,
+  Marker,
+} from "@react-google-maps/api";
 import { useState, useEffect, useRef } from "react";
+import GMap from "./GMap";
 library.add(
   faUser,
   faRightToBracket,
@@ -28,8 +36,10 @@ library.add(
   faPersonCirclePlus,
   faLocationDot
 );
-
 function Header() {
+  const stateSelect = useRef(null);
+  const citySelect = useRef(null);
+  const [markerPosition, setMarkerPosition] = useState([35, -80.2]);
   const sessionUser = useSelector((state) => state.session.user);
   const [addGroupModal, setAddGroupModal] = useState(false);
   const [addEventModal, setAddEventModal] = useState(false);
@@ -88,8 +98,33 @@ function Header() {
     "WI",
     "WY",
   ];
+  async function getAddress(
+    lat,
+    long,
+    key = "AIzaSyDdrCHNzGnQUz1HQOwfA7jZZsIjo7ZHvOY"
+  ) {
+    let res = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${key}`
+    );
+    res = await res.json();
+    for (let r of res.results) {
+      //search for the state
+      for (let a of r.address_components) {
+        if (a.types.includes("administrative_area_level_1")) {
+          stateSelect.current.value = a.short_name;
+        }
+      }
+      //search for the city
+      for (let a of r.address_components) {
+        if (a.types.includes("locality")) {
+          citySelect.current.value = a.short_name;
+        }
+      }
+    }
+  }
   const submitGroup = async (e) => {
     e.preventDefault();
+    console.log(e.target);
     const imageUpload = e.target[3]?.files[0];
     const formData = {};
     console.log(imageUpload);
@@ -105,9 +140,9 @@ function Header() {
     formData.about = e?.target[1].value;
     formData.name = e?.target[0].value;
     formData.type = e?.target[2].value;
-    formData.state = e?.target[4].value;
+    formData.state = stateSelect.current.value;
     formData.private = "false";
-    formData.city = e?.target[5].value;
+    formData.city = citySelect.current.value;
     dispatch(sessionActions.addGroup(formData));
 
     toggleGroupModal();
@@ -124,6 +159,10 @@ function Header() {
   const toggleEventModal = () => {
     setAddEventModal(!addEventModal);
   };
+  const setGMapPosition = (e) => {
+    getAddress(e.latLng.lat(), e.latLng.lng());
+    setMarkerPosition([e.latLng.lat(), e.latLng.lng()]);
+  };
 
   function setScroll(bool) {
     bool
@@ -132,11 +171,11 @@ function Header() {
   }
 
   return (
-    <div className={"HeaderDiv " + (location == "/" ? "" : "loggedIn")}>
+    <div className={"HeaderDiv " + (location !== "/" ? "loggedIn" : "")}>
       <img src={logo} alt="logo" />
-      {location == "/dashboard" && <SearchBar type="Groups"></SearchBar>}
+      {location != "/" && <SearchBar type="Groups"></SearchBar>}
       <div className="menuHeader">
-        {location == "/dashboard" && (
+        {location != "/" && (
           <>
             <span className="iconButton" onClick={toggleEventModal}>
               <FontAwesomeIcon icon={faLocationDot}></FontAwesomeIcon>
@@ -191,18 +230,30 @@ function Header() {
                       className="prevImage"
                     ></img>
                   )}
+                  <GMap
+                    markerPosition={markerPosition}
+                    onClick={setGMapPosition}
+                  />
                 </div>
               </div>
 
               <label className="headerModalLabel">Location</label>
               <div className="small row">
-                <select name="state" className="headerModalInput select">
+                <select
+                  name="state"
+                  className="headerModalInput select"
+                  ref={stateSelect}
+                >
                   {listOfUSStates.map((state) => (
                     <option value={state}>{state}</option>
                   ))}
                 </select>
 
-                <input className="headerModalInput" placeholder="City"></input>
+                <input
+                  className="headerModalInput"
+                  placeholder="City"
+                  ref={citySelect}
+                ></input>
               </div>
               <button
                 type="submit"

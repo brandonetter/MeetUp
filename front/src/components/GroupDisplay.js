@@ -18,6 +18,80 @@ function GroupDisplay() {
   const [loc, setLoc] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortedResults, setSortedResults] = useState([]);
+  const [finalResults, setFinalResults] = useState([]);
+  useEffect(() => {
+    console.log(results);
+    setFinalResults([]);
+    async function sortedRes() {
+      const tempRest = results?.map(async (result) => {
+        return {
+          ...result,
+          distance: await getDistance(result.city + ", " + result.state),
+        };
+      });
+      //sort tempRest by distance
+      let tt = [...tempRest];
+      setSortedResults(tt);
+    }
+    sortedRes();
+    //call getDistance on each result's city, state
+  }, [results]);
+  useEffect(() => {
+    console.log(sortedResults);
+    async function waitSort() {
+      let res = [];
+      for await (let r of sortedResults) {
+        console.log("yeahh");
+        if (r.distance) {
+          if (r.distance.includes(",")) {
+            r.distance = r.distance.split(",")[0] + r.distance.split(",")[1];
+          }
+          if (r.distance.includes("km") || r.distance.includes("m")) {
+            r.distance = r.distance.split(" ")[0];
+            r.distance = r.distance * 0.621371;
+            r.distance = r.distance.toFixed(2);
+          }
+        }
+        res.push(r);
+        //sort res by distance
+      }
+      res = res.sort((a, b) => Number(a.distance) - Number(b.distance));
+
+      setFinalResults(res);
+    }
+    waitSort();
+  }, [sortedResults]);
+  async function getDistance(location) {
+    return new Promise((resolve, reject) => {
+      var origin1 = loc + ", USA";
+      var destinationA = location;
+      const service = new window.google.maps.DistanceMatrixService();
+      function callback(response, status) {
+        let distance = 0;
+        if (status == "OK") {
+          var origins = response.originAddresses;
+
+          for (var i = 0; i < origins.length; i++) {
+            var results = response.rows[i].elements;
+            for (var j = 0; j < results.length; j++) {
+              var element = results[j];
+              distance = element?.distance?.text;
+            }
+          }
+          resolve(distance);
+        }
+      }
+      service.getDistanceMatrix(
+        {
+          origins: [origin1],
+          destinations: [destinationA],
+          travelMode: "DRIVING",
+        },
+        callback
+      );
+    });
+  }
   useEffect(() => {
     store.subscribe(() => {
       let state = store.getState();
@@ -33,11 +107,12 @@ function GroupDisplay() {
       stateFromLoc = stateFromLoc.toUpperCase();
       stateFromLoc = stateFromLoc.trim();
       if (state.search.location !== "") {
-        if (preRes) {
-          preRes = preRes.filter((group) => {
-            return group.state === stateFromLoc || group.city === cityFromLoc;
-          });
-        }
+        // if (preRes) {
+        //   preRes = preRes.filter((group) => {
+        //     let searchLoc = group.city + ", " + group.state;
+        //     return group.state === stateFromLoc || group.city === cityFromLoc;
+        //   });
+        // }
       } else {
         //setLoc("Anywhere");
       }
@@ -45,7 +120,7 @@ function GroupDisplay() {
       clearTimeout(timeoutInt);
       timeoutInt = setTimeout(() => {
         setLoading(false);
-      }, 600);
+      }, 500);
     });
   }, []);
   let timeoutInt = 0;
@@ -92,9 +167,9 @@ function GroupDisplay() {
       <h3 className="groupDisplayHeader">
         Groups Near {loc ? loc : "Anywhere"}
       </h3>
-      {loading && loadingCards()}
 
-      {!loading && results?.map((group) => <div>{genCard(group)}</div>)}
+      {loading && loadingCards()}
+      {!loading && finalResults?.map((group) => <div>{genCard(group)}</div>)}
     </div>
   );
 }

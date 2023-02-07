@@ -9,21 +9,19 @@ import {
   Redirect,
   useHistory,
 } from "react-router-dom";
-import Login from "./components/login";
 import Landing from "./components/Landing";
+import GroupPage from "./components/GroupPage";
 import Dashboard from "./components/Dashboard";
 import { useSelector } from "react-redux";
 function App() {
   const sessionUser = useSelector((state) => state.session.user);
   const history = useHistory();
   const [redir, setRedir] = useState("");
-  useEffect(() => {
-    if (sessionUser) {
-      setRedir(<Redirect to="/dashboard"></Redirect>);
-    } else {
-      setRedir(<Redirect to="/"></Redirect>);
-    }
-  }, [sessionUser]);
+  // useEffect(() => {
+  //   if (!sessionUser) {
+  //     setRedir(<Redirect to="/"></Redirect>);
+  //   }
+  // }, [sessionUser]);
 
   return (
     <BrowserRouter>
@@ -35,6 +33,9 @@ function App() {
         </Route>
         <Route path="/dashboard">
           <Dashboard></Dashboard>
+        </Route>
+        <Route path="/groups/:groupId">
+          <GroupPage />
         </Route>
       </Switch>
     </BrowserRouter>

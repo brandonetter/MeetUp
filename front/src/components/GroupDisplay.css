@@ -11,7 +11,16 @@
   background-color: rgba(199, 229, 249, 0.8);
   cursor: pointer;
 }
-
+.map {
+  position: absolute;
+  top: 10px;
+  right: 3vw;
+  border: 1px solid #ccc;
+  width: 250px;
+  height: 250px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
 .groupCard {
   user-select: none;
   display: flex;
@@ -42,6 +51,16 @@
   align-items: center;
   transition: all 0.5s ease;
 }
+.groupPageButton {
+  position: absolute;
+  top: 275px;
+  height: 50px;
+  right: 3vw;
+  width: 250px;
+  font-size: 1.2em;
+  color: rgb(59, 59, 59);
+  cursor: pointer;
+}
 .expand {
   background-color: rgb(255, 255, 255);
   position: absolute;
@@ -49,8 +68,9 @@
   left: 50vw;
   top: 50vh;
   transform: translate(-50%, -50%);
-  width: 50%;
-  height: 50%;
+  width: min(50%, 700px);
+  min-width: 700px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -63,11 +83,22 @@
   border-radius: 0;
   margin-right: 0;
 }
+.groupCard.expand > .groupCardImage img {
+  width: 350px;
+  height: 350px;
+  border-radius: 0;
+  margin-right: 0;
+}
 .groupCardImage img {
   width: 200px;
   height: 175px;
   border-radius: 10%;
   margin-right: 10px;
+}
+.distance {
+  z-index: -1;
+  color: rgb(98, 98, 98);
+  cursor: pointer;
 }
 .groupCard.expand > .groupCardHeader {
   margin-top: 0px;
