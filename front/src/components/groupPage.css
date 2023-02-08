@@ -1,4 +1,5 @@
 .groupPageContent {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -172,6 +173,26 @@
   padding: 10px;
   width: 90%;
   height: 40vh;
+}
+.groupPageBackButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+  margin: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  background-color: rgba(192, 220, 245, 0.347);
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.113);
+  border-radius: 50%;
 }
 .groupPageAdminPanel {
   flex-direction: column;

@@ -11,9 +11,10 @@ import {
   faLocationArrow,
   faPeopleArrows,
   faU,
+  faArrowLeft as faBackward,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-library.add(faLocationArrow, faPeopleArrows, faUser);
+library.add(faLocationArrow, faPeopleArrows, faUser, faBackward);
 function GroupPage() {
   const sessionUser = useSelector((state) => state.session.user);
 
@@ -125,6 +126,7 @@ function GroupPage() {
   };
   return (
     <>
+      {redir}
       <div className="groupPageContent">
         <div className="groupPageGreet">
           <div className="groupPagePreviewImage">
@@ -132,7 +134,13 @@ function GroupPage() {
           </div>
 
           <div className="groupPageGreetingCard">
-            <div className="groupPageName">{group?.name}</div>
+            <div
+              onClick={() => setRedir(<Redirect to="/dashboard"></Redirect>)}
+              className="groupPageBackButton"
+            >
+              <FontAwesomeIcon icon={faBackward}></FontAwesomeIcon>
+            </div>
+            <div className="groupPageName">{group?.name} </div>
             <div className="groupPageMiscInfo">
               <div className="groupPageLocation">
                 <FontAwesomeIcon icon={faLocationArrow}></FontAwesomeIcon>

@@ -17,11 +17,11 @@ function App() {
   const sessionUser = useSelector((state) => state.session.user);
   const history = useHistory();
   const [redir, setRedir] = useState("");
-  // useEffect(() => {
-  //   if (!sessionUser) {
-  //     setRedir(<Redirect to="/"></Redirect>);
-  //   }
-  // }, [sessionUser]);
+  useEffect(() => {
+    if (!sessionUser) {
+      setRedir(<Redirect to="/"></Redirect>);
+    }
+  }, [sessionUser]);
 
   return (
     <BrowserRouter>
