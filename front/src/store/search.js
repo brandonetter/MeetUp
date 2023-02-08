@@ -43,6 +43,26 @@ export const deleteGroup = (id) => async (dispatch) => {
     return group;
   }
 };
+export const getGroupVenues = (id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/groups/${id}/venues`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const venues = await response.json();
+    return venues;
+  }
+};
+
+export const getUserGroups = () => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/groups`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const groups = await response.json();
+    return groups;
+  }
+};
+
 export const updateGroup = (groupData, id) => async (dispatch) => {
   let options = {};
   options.method = "PUT";

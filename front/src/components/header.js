@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Login from "./login";
 import * as sessionActions from "../store/session";
+import * as searchActions from "../store/search";
 import { useDispatch, useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
 
@@ -44,8 +45,22 @@ function Header() {
   const [addGroupModal, setAddGroupModal] = useState(false);
   const [addEventModal, setAddEventModal] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
+  const [userGroups, setUserGroups] = useState([]);
   const location = useLocation().pathname;
   const dispatch = useDispatch();
+  useEffect(() => {
+    async function getUserGroups() {
+      let userGroups = await dispatch(searchActions.getUserGroups());
+      //filter groups where the user ID doesn't match the organizer ID
+      console.log(sessionUser);
+      userGroups = userGroups.filter(
+        (group) => group.organizerId === sessionUser?.id
+      );
+
+      setUserGroups(userGroups);
+    }
+    getUserGroups();
+  }, [addEventModal]);
   const listOfUSStates = [
     "AL",
     "AK",
@@ -205,6 +220,90 @@ function Header() {
             </div>
             <form className="headerModalForm" onSubmit={submitGroup}>
               <label className="headerModalLabel">Group Name</label>
+              <input className="headerModalInput"></input>
+              <label className="headerModalLabel">Group Description</label>
+              <textarea className="headerModalInput"></textarea>
+              <label className="headerModalLabel">Group Type</label>
+              <select name="type" className="headerModalInput select">
+                <option value="Online">Online</option>
+                <option value="In person">In Person</option>
+              </select>
+              <div className="headerModalGroup">
+                <div className="small">
+                  <label className="headerModalLabel">Group Image</label>
+                  <input
+                    type="file"
+                    className="headerModalInput"
+                    onChange={showFile}
+                  ></input>
+                </div>
+                <div className="small">
+                  {currentImage && (
+                    <img
+                      src={currentImage}
+                      alt="groupImage"
+                      className="prevImage"
+                    ></img>
+                  )}
+                  <GMap
+                    markerPosition={markerPosition}
+                    onClick={setGMapPosition}
+                  />
+                </div>
+              </div>
+
+              <label className="headerModalLabel">Location</label>
+              <div className="small row">
+                <select
+                  name="state"
+                  className="headerModalInput select"
+                  ref={stateSelect}
+                >
+                  {listOfUSStates.map((state) => (
+                    <option value={state}>{state}</option>
+                  ))}
+                </select>
+
+                <input
+                  className="headerModalInput"
+                  placeholder="City"
+                  ref={citySelect}
+                ></input>
+              </div>
+              <button
+                type="submit"
+                className="headerModalButton"
+                value="Add Group"
+              >
+                Add group
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+      {addEventModal && (
+        <div className="headerModal">
+          <div className="headerModalContent">
+            <div className="headerModalHeader">
+              <span className="headerModalTitle">Event</span>
+
+              <span className="modalClose" onClick={toggleEventModal}>
+                <FontAwesomeIcon
+                  icon={faCircleXmark}
+                  className="xButton"
+                ></FontAwesomeIcon>
+              </span>
+            </div>
+            <form className="headerModalForm" onSubmit={submitGroup}>
+              <div className="headerGroupSelect">
+                <label className="headerModalLabel">Group: </label>
+                <select name="type" className="headerModalInput select">
+                  {userGroups?.map((group) => (
+                    <option value={group.id}>{group.name}</option>
+                  ))}
+                </select>
+              </div>
+              <label className="headerModalLabel">Event Name</label>
               <input className="headerModalInput"></input>
               <label className="headerModalLabel">Group Description</label>
               <textarea className="headerModalInput"></textarea>
