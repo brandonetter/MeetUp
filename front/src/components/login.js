@@ -45,6 +45,7 @@ function Login() {
   useEffect(() => {
     async function restore() {
       return dispatch(sessionActions.sessionRestore()).catch(async (res) => {
+        console.log("waaaaaaaaaaaaaaaa-------------! Session restore failed!");
         if (!res.json()) return;
         const data = await res?.json();
         if (data && data.errors) setErrors(data.errors);
@@ -101,7 +102,7 @@ function Login() {
   }, [credential, password, fname, lname, uname]);
 
   const logout = () => {
-    document.cookie = "authorized=''";
+    document.cookie = "authorized='expired!'";
     dispatch(sessionActions.sessionLogout());
     console.log("logout");
     setRedir(<Redirect to="/" />);

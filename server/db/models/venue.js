@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static validate = {
       address: (input) => {
         if (input == null)
-          return "Address must be between 10 and 100 characters";
-        let nameFormat = /^[a-zA-Z0-9\s]{10,100}$/;
+          return "Address must be between 5 and 100 characters";
+        let nameFormat = /^[a-zA-Z0-9\s]{5,100}$/;
         return input.match(nameFormat);
       },
 

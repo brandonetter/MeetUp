@@ -1,5 +1,5 @@
 import { GoogleMap, Marker } from "@react-google-maps/api";
-function GMap({ markerPosition, onClick, draggable }) {
+function GMap({ markerPosition = [40, -100], onClick, draggable }) {
   return (
     <>
       <GoogleMap

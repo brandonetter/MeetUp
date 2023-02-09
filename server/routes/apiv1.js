@@ -81,8 +81,8 @@ router.post("/auth", async (req, res) => {
     });
     if (user.validPassword(req.body.password)) {
       res.cookie("authorized", user.generateToken(), {
-        maxAge: 360000,
-        expires: "Wed, 08 Feb 2028 00:47:00 GMT",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        path: "/", // <--- important
       });
       let { salt, hash, ...userD } = user.dataValues;
       res.json({ user: userD });

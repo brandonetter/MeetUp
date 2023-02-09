@@ -28,6 +28,8 @@ export async function csrfFetch(url, options = {}) {
   console.log("Res2", res);
   return res;
 }
-export function restoreCSRF() {
-  return csrfFetch("/api/csrf/restore");
+export function restoreCSRF(options = {}) {
+  options.method = options.method || "GET";
+  // set options.headers to an empty object if there is no headers
+  return window.fetch("/api/csrf/restore", options);
 }

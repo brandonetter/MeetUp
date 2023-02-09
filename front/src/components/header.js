@@ -46,6 +46,7 @@ function Header() {
   const [addEventModal, setAddEventModal] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
+  const [venues, setVenues] = useState([]);
   const location = useLocation().pathname;
   const dispatch = useDispatch();
   useEffect(() => {
@@ -178,6 +179,16 @@ function Header() {
     getAddress(e.latLng.lat(), e.latLng.lng());
     setMarkerPosition([e.latLng.lat(), e.latLng.lng()]);
   };
+  const getVenues = async (e) => {
+    //get current id of selected group
+    //get current id of selected group from e
+    let groupId = e.target.value;
+
+    // use searchAction to get venues
+    let res = await dispatch(searchActions.getGroupVenues(groupId));
+    setVenues(res.Venues);
+    console.log(res);
+  };
 
   function setScroll(bool) {
     bool
@@ -295,65 +306,57 @@ function Header() {
               </span>
             </div>
             <form className="headerModalForm" onSubmit={submitGroup}>
-              <div className="headerGroupSelect">
-                <label className="headerModalLabel">Group: </label>
-                <select name="type" className="headerModalInput select">
-                  {userGroups?.map((group) => (
-                    <option value={group.id}>{group.name}</option>
-                  ))}
-                </select>
+              <div className="headerGroupSelectVenues">
+                <div>
+                  <label className="headerModalLabel">Group: </label>
+                  <select
+                    name="type"
+                    className="headerModalInput select"
+                    onChange={getVenues}
+                  >
+                    <option value="0">Select a group</option>
+                    {userGroups?.map((group) => (
+                      <option value={group.id}>{group.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="headerModalLabel">Venue: </label>
+                  <select name="type" className="headerModalInput select">
+                    <option value="0">Select a Venue</option>
+                    {venues?.map((group) => (
+                      <option value={group.id}>
+                        {group.address + ", " + group.city + ", " + group.state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <label className="headerModalLabel">Event Name</label>
               <input className="headerModalInput"></input>
-              <label className="headerModalLabel">Group Description</label>
+              <label className="headerModalLabel">Event Description</label>
               <textarea className="headerModalInput"></textarea>
               <label className="headerModalLabel">Group Type</label>
               <select name="type" className="headerModalInput select">
                 <option value="Online">Online</option>
                 <option value="In person">In Person</option>
               </select>
-              <div className="headerModalGroup">
-                <div className="small">
-                  <label className="headerModalLabel">Group Image</label>
-                  <input
-                    type="file"
-                    className="headerModalInput"
-                    onChange={showFile}
-                  ></input>
-                </div>
-                <div className="small">
-                  {currentImage && (
-                    <img
-                      src={currentImage}
-                      alt="groupImage"
-                      className="prevImage"
-                    ></img>
-                  )}
-                  <GMap
-                    markerPosition={markerPosition}
-                    onClick={setGMapPosition}
-                  />
-                </div>
-              </div>
+              <br></br>
+              <label className="headerModalLabel">Event Capacity</label>
+              <input
+                className="headerModalInput"
+                type="number"
+                defaultValue={20}
+              ></input>
+              <label className="headerModalLabel">Event Price</label>
+              <input
+                className="headerModalInput"
+                type="number"
+                increment="0.01"
+                step="0.01"
+                defaultValue={5.99}
+              ></input>
 
-              <label className="headerModalLabel">Location</label>
-              <div className="small row">
-                <select
-                  name="state"
-                  className="headerModalInput select"
-                  ref={stateSelect}
-                >
-                  {listOfUSStates.map((state) => (
-                    <option value={state}>{state}</option>
-                  ))}
-                </select>
-
-                <input
-                  className="headerModalInput"
-                  placeholder="City"
-                  ref={citySelect}
-                ></input>
-              </div>
               <button
                 type="submit"
                 className="headerModalButton"

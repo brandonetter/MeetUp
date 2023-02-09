@@ -38,7 +38,6 @@ function GroupDisplay() {
     //call getDistance on each result's city, state
   }, [results]);
   useEffect(() => {
-    console.log(sortedResults);
     async function waitSort() {
       let res = [];
       for await (let r of sortedResults) {

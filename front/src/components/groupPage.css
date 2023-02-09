@@ -132,11 +132,13 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  min-width: 115px;
   height: 100%;
   padding: 0px;
   margin: 0px;
   font-size: 1.2rem;
   font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.073);
   color: rgb(58, 58, 58);
   cursor: pointer;
 }
@@ -172,8 +174,9 @@
   align-items: left;
   padding: 10px;
   width: 90%;
-  height: 40vh;
+  height: fit-content;
 }
+
 .groupPageBackButton {
   position: absolute;
   top: 0;
@@ -199,7 +202,8 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 50px;
+  height: fit-content;
+  min-height: 30vh;
   padding: 0px;
   margin: 0px;
 }

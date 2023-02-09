@@ -21,6 +21,7 @@ function SearchBar({ type }) {
         navigator.geolocation.getCurrentPosition(showPosition, posError);
       }
     }
+
     async function getAddress(
       lat,
       long,
