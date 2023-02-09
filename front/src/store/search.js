@@ -43,6 +43,27 @@ export const deleteGroup = (id) => async (dispatch) => {
     return group;
   }
 };
+export const addEvent = (eventData, id) => async (dispatch) => {
+  let options = {};
+  options.method = "POST";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(eventData);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${id}/events`, options);
+  if (response.ok) {
+    const event = await response.json();
+    return event;
+  }
+};
+
 export const getGroupVenues = (id) => async (dispatch) => {
   const response = await window.fetch(`/apiv1/groups/${id}/venues`, {
     method: "GET",

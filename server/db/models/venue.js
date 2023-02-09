@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       address: (input) => {
         if (input == null)
           return "Address must be between 5 and 100 characters";
-        let nameFormat = /^[a-zA-Z0-9\s]{5,100}$/;
+        let nameFormat = /^[a-zA-Z0-9-\s]{5,100}$/;
         return input.match(nameFormat);
       },
 

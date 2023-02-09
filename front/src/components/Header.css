@@ -206,6 +206,57 @@ textarea {
 .small {
   width: 100%;
 }
+.headerModalGroupEventDate {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.headerModalCalendarContent {
+  position: relative;
+  width: 80%;
+  height: 80%;
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.847);
+  justify-content: center;
+  align-items: center;
+}
+.headerModalCalendarXButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #1d1d1d6e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.headerModalCalendarModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+}
+.headerModalGroupEventDate .headerModalInput {
+  width: 50%;
+  height: 100%;
+  margin: 1rem 0.4rem;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  border: 1px solid #1d1d1d6e;
+  border-radius: 5px;
+}
 .select {
   width: 15%;
   min-width: 50px;

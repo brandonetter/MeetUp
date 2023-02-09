@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import "./dashboard.css";
 import Calender from "./Calender";
 import GroupDisplay from "./GroupDisplay";
+import MyGroups from "./MyGroups";
+import MyEvents from "./MyEvents";
 function Dashboard() {
   const user = useSelector((state) => state.session.user);
   return (
@@ -11,6 +13,8 @@ function Dashboard() {
         <div>
           <h3 className="dashTitle">Events From Your Groups</h3>
           <Calender />
+          <MyGroups />
+          <MyEvents />
         </div>
         <div>
           <GroupDisplay />

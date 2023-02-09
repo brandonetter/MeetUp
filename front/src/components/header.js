@@ -48,8 +48,19 @@ function Header() {
   const [currentImage, setCurrentImage] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
   const [venues, setVenues] = useState([]);
+  const [showCal, setShowCal] = useState(false);
+  const [startDate, setStartDate] = useState("0/0/0");
+  const [endDate, setEndDate] = useState("0/0/0");
   const location = useLocation().pathname;
   const dispatch = useDispatch();
+  const toggleShowCal = () => {
+    setShowCal(!showCal);
+  };
+
+  const updateDate = (startDate, endDate) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
+  };
   useEffect(() => {
     async function getUserGroups() {
       let userGroups = await dispatch(searchActions.getUserGroups());
@@ -139,6 +150,24 @@ function Header() {
       }
     }
   }
+  const submitEvent = async (e) => {
+    e.preventDefault();
+    const formData = {};
+    formData.name = e?.target[2].value;
+    formData.type = e?.target[4].value;
+    formData.description = e?.target[3].value;
+    formData.startDate = startDate;
+    formData.endDate = endDate;
+    formData.venueId = e?.target[1].value;
+    formData.groupId = e?.target[0].value;
+    formData.capacity = e?.target[5].value;
+    formData.price = e?.target[6].value;
+    console.log(formData);
+    const event = dispatch(searchActions.addEvent(formData, formData.groupId));
+    console.log(event);
+    setAddEventModal(false);
+  };
+
   const submitGroup = async (e) => {
     e.preventDefault();
     console.log(e.target);
@@ -306,7 +335,7 @@ function Header() {
                 ></FontAwesomeIcon>
               </span>
             </div>
-            <form className="headerModalForm" onSubmit={submitGroup}>
+            <form className="headerModalForm" onSubmit={submitEvent}>
               <div className="headerGroupSelectVenues">
                 <div>
                   <label className="headerModalLabel">Group: </label>
@@ -361,15 +390,37 @@ function Header() {
                   defaultValue={5.99}
                 ></input>
               </div>
-              <div className="headerModalCalendar">
-                <Calender small selectable></Calender>
+              <label className="headerModalLabel">Event Date</label>
+              <div className="headerModalGroupEventDate">
+                <div onClick={toggleShowCal}>Select Date</div>
+                <input className="headerModalInput" value={startDate}></input>
+                <input className="headerModalInput" value={endDate}></input>
               </div>
+              {showCal && (
+                <div className="headerModalCalendarModal">
+                  <div className="headerModalCalendarContent">
+                    <div className="headerModalCalendarXButton">
+                      <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        onClick={toggleShowCal}
+                      ></FontAwesomeIcon>
+                    </div>
+                    <div className="headerModalCalendar">
+                      <Calender
+                        small
+                        selectable
+                        sendDate={updateDate}
+                      ></Calender>
+                    </div>
+                  </div>
+                </div>
+              )}
               <button
                 type="submit"
                 className="headerModalButton"
                 value="Add Group"
               >
-                Add group
+                Add Event
               </button>
             </form>
           </div>
