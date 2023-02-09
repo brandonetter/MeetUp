@@ -10,6 +10,9 @@
   border-radius: 5px;
   box-sizing: border-box;
 }
+.small {
+  width: 300px;
+}
 .mainCal h3 {
   user-select: none;
   width: 230px;

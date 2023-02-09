@@ -8,10 +8,12 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
 
 library.add(faArrowLeft, faArrowRight);
-function Calender() {
+function Calender({ small = false, selectable = false }) {
   const [month, setMonth] = useState(null);
   const [days, setDays] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   //Object containing Months and 0 indexed numbers
   const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const toNum = {
@@ -60,6 +62,14 @@ function Calender() {
     }
     setMonth(toMonth[prev]);
   };
+  const daySelect = (e) => {
+    if (e.target.classList.contains("today")) {
+      e.target.classList.remove("today");
+    } else {
+      e.target.classList.add("today");
+    }
+  };
+
   useEffect(() => {
     let cdate = date;
     if (month) cdate = new Date(date.getFullYear(), toNum[month], 1);
@@ -83,7 +93,7 @@ function Calender() {
           date.getMonth() === new Date().getMonth() &&
           date.getFullYear() === new Date().getFullYear()
         ) {
-          days.push([date.getDate(), "today"]);
+          !selectable && days.push([date.getDate(), "today"]);
         } else {
           days.push(new Date(date).getDate());
         }
@@ -94,7 +104,7 @@ function Calender() {
     }
   }, [month]);
   return (
-    <div className="mainCal">
+    <div className={!small ? "mainCal" : "mainCal small"}>
       <div className="mainCalDiv">
         <h3>
           {month} {year}
@@ -113,7 +123,9 @@ function Calender() {
           ) : day?.[1] ? (
             <div className={day[1]}>{day[0]}</div>
           ) : (
-            <div className="day">{day}</div>
+            <div className="day" onClick={selectable ? daySelect : null}>
+              {day}
+            </div>
           )
         )}
       </div>

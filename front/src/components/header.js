@@ -3,6 +3,7 @@ import logo from "../images/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLocation } from "react-router-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import Calender from "./Calender";
 import {
   faUser,
   faRightToBracket,
@@ -332,31 +333,37 @@ function Header() {
                   </select>
                 </div>
               </div>
+
               <label className="headerModalLabel">Event Name</label>
               <input className="headerModalInput"></input>
               <label className="headerModalLabel">Event Description</label>
               <textarea className="headerModalInput"></textarea>
-              <label className="headerModalLabel">Group Type</label>
-              <select name="type" className="headerModalInput select">
-                <option value="Online">Online</option>
-                <option value="In person">In Person</option>
-              </select>
-              <br></br>
-              <label className="headerModalLabel">Event Capacity</label>
-              <input
-                className="headerModalInput"
-                type="number"
-                defaultValue={20}
-              ></input>
-              <label className="headerModalLabel">Event Price</label>
-              <input
-                className="headerModalInput"
-                type="number"
-                increment="0.01"
-                step="0.01"
-                defaultValue={5.99}
-              ></input>
 
+              <br></br>
+              <div className="headerModalGroupEvent">
+                <label className="headerModalLabel">Event Type</label>
+                <select name="type" className="headerModalInput select">
+                  <option value="Online">Online</option>
+                  <option value="In person">In Person</option>
+                </select>
+                <label className="headerModalLabel">Event Capacity</label>
+                <input
+                  className="headerModalInput"
+                  type="number"
+                  defaultValue={20}
+                ></input>
+                <label className="headerModalLabel">Event Price</label>
+                <input
+                  className="headerModalInput"
+                  type="number"
+                  increment="0.01"
+                  step="0.01"
+                  defaultValue={5.99}
+                ></input>
+              </div>
+              <div className="headerModalCalendar">
+                <Calender small selectable></Calender>
+              </div>
               <button
                 type="submit"
                 className="headerModalButton"
