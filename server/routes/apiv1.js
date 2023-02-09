@@ -81,7 +81,8 @@ router.post("/auth", async (req, res) => {
     });
     if (user.validPassword(req.body.password)) {
       res.cookie("authorized", user.generateToken(), {
-        maxAge: 360000,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        path: "/", // <--- important
       });
       let { salt, hash, ...userD } = user.dataValues;
       res.json({ user: userD });
@@ -138,12 +139,24 @@ router.get("/groups/:group_id", async (req, res) => {
 });
 router.post("/groups", authMiddle, async (req, res) => {
   try {
+    let preview = req.body?.preview;
     let ob = t.tidy(Group, req.body);
     ob.organizerId = req.userId;
     let groupReq = await Group.create(ob);
     let { numMembers, ...group } = groupReq.dataValues;
     await req.userObject.addGroup(groupReq);
     await groupReq.confirmJoin(req.userId);
+    if (preview) {
+      let im = {
+        url: preview,
+        preview: "true",
+      };
+      let ob = t.tidy(Image, im);
+      ob.userId = req.userId;
+      ob.groupId = group.id;
+      let result = await Group.addNewImage(ob);
+    }
+
     res.json(group);
   } catch (e) {
     res.json(e);

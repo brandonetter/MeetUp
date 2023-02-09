@@ -7,7 +7,22 @@
   margin-bottom: 10px;
   width: 80%;
 }
+.groupCard:hover:not(.expand) {
+  background-color: rgba(199, 229, 249, 0.8);
+  cursor: pointer;
+}
+.map {
+  position: absolute;
+  top: 10px;
+  right: 3vw;
+  border: 1px solid #ccc;
+  width: 250px;
+  height: 250px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
 .groupCard {
+  user-select: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -23,17 +38,104 @@
   min-width: 400px;
   height: 275px;
 }
+.dimmer {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease;
+}
+.groupPageButton {
+  position: absolute;
+  top: 275px;
+  height: 50px;
+  right: 3vw;
+  width: 250px;
+  font-size: 1.2em;
+  color: rgb(59, 59, 59);
+  cursor: pointer;
+}
+.expand {
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  z-index: 10 !important;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: min(50%, 700px);
+  min-width: 700px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  user-select: auto;
+}
+.groupCard.expand > .groupCardImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  margin-right: 0;
+}
+.groupCard.expand > .groupCardImage img {
+  width: 350px;
+  height: 350px;
+  border-radius: 0;
+  margin-right: 0;
+}
 .groupCardImage img {
   width: 200px;
   height: 175px;
   border-radius: 10%;
   margin-right: 10px;
 }
+.distance {
+  z-index: -1;
+  color: rgb(98, 98, 98);
+  cursor: pointer;
+}
+.groupCard.expand > .groupCardHeader {
+  margin-top: 0px;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  margin-right: 0;
+}
+.groupCard.expand > .groupCardHeader > .groupCardDescription {
+  width: 100%;
+  height: 40%;
+  border-radius: 0;
+  margin-right: 0;
+}
+.groupX {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  color: rgb(59, 59, 59);
+  cursor: pointer;
+  margin: 10px;
+}
+.groupOpen {
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  color: rgba(59, 59, 59, 0.347);
+  cursor: pointer;
+  margin: 10px;
+}
 .groupCardDescription {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
+  word-break: break-word;
   margin-bottom: 20px;
 }
 .groupCardTitle {

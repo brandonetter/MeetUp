@@ -1,0 +1,228 @@
+.groupPageContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 60vw;
+  font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
+    Helvetica, Arial, sans-serif;
+  height: fit-content;
+  background-color: rgba(255, 255, 255, 0.606);
+  padding: 0px;
+  margin: auto;
+}
+.groupPageGreet {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40vh;
+  padding: 0px;
+  margin: 0px;
+}
+.groupPagePreviewImage {
+  width: 50vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.groupPagePreviewImage img {
+  width: 350px;
+  height: 350px;
+  border-radius: 10px;
+  margin-right: 0;
+}
+.groupPageGreetingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 10px;
+  margin-left: 50px;
+  height: 300px;
+  overflow: hidden;
+}
+.groupPageName {
+  font-weight: 900;
+  font-size: 2.5rem;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+.groupPageMiscInfo {
+  color: rgb(58, 58, 58);
+  display: flex;
+  margin-top: 10px;
+  margin-left: 10px;
+  gap: 10px;
+
+  flex-direction: column;
+  overflow: hidden;
+}
+.groupPageLocation {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+.groupPageMemberCount {
+  display: flex;
+  height: 100%;
+  gap: 10px;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+.groupPageOrganizer {
+  display: flex;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* <div className="groupPageBorder"></div>
+<div className="groupPageMenuBar">
+  <div className="groupPageMenu">
+    <div className="groupPageMenuButton">About</div>
+    <div className="groupPageMenuButton">Events</div>
+    <div className="groupPageMenuButton">Members</div>
+    <div className="groupPageMenuButton">Photos</div>
+  </div>
+
+  <div className="groupPageMenuButton">Join Group</div> */
+
+.groupPageBorder {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(58, 58, 58, 0.253);
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 20px;
+}
+.groupPageMenuBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  padding: 0px;
+  margin: 0px;
+}
+.groupPageMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+.groupPageMenuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 115px;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.073);
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+}
+.Join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  padding: 0px;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgb(235, 235, 235);
+  cursor: pointer;
+  background-color: rgb(248, 104, 104);
+  border: 1px solid rgb(58, 58, 58);
+  border-radius: 5px;
+}
+.groupPageMenuButton:hover {
+  color: rgb(97, 185, 223);
+}
+.selected {
+  color: rgb(28, 130, 246);
+}
+.groupPageMenuButton:visited {
+  color: rgb(0, 0, 0);
+}
+.groupPageMenuContent {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  padding: 10px;
+  width: 90%;
+  height: fit-content;
+}
+
+.groupPageBackButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+  margin: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  background-color: rgba(192, 220, 245, 0.347);
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.113);
+  border-radius: 50%;
+}
+.groupPageAdminPanel {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: fit-content;
+  min-height: 30vh;
+  padding: 0px;
+  margin: 0px;
+}
+.groupPageAdminPanel button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 100%;
+  padding: 0px;
+  margin: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgb(58, 58, 58);
+  cursor: pointer;
+  background-color: rgb(84, 139, 235);
+  border: 1px solid rgb(58, 58, 58);
+  border-radius: 5px;
+}
+.groupPageAdminPanel button:hover {
+  background-color: rgb(97, 185, 223);
+}

@@ -21,6 +21,7 @@ function SearchBar({ type }) {
         navigator.geolocation.getCurrentPosition(showPosition, posError);
       }
     }
+
     async function getAddress(
       lat,
       long,
@@ -30,11 +31,21 @@ function SearchBar({ type }) {
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${key}`
       );
       res = await res.json();
-      let add = "";
-      add += res.results[0].address_components[3].short_name;
-      add += ",";
-      add += res.results[0].address_components[5].short_name;
-      setLocation(add);
+      let city, state;
+      for (let r of res.results) {
+        for (let a of r.address_components) {
+          if (city && state) break;
+          if (a.types.includes("locality")) {
+            city = a.short_name;
+          }
+        }
+        for (let a of r.address_components) {
+          if (a.types.includes("administrative_area_level_1")) {
+            state = "," + a.short_name;
+          }
+        }
+      }
+      setLocation(city + " " + state);
     }
     function showPosition(pos) {
       console.log(pos);
@@ -55,7 +66,10 @@ function SearchBar({ type }) {
   }, []);
   const setLoc = (e) => {
     e.preventDefault();
-    setLocation(document.getElementsByClassName("sb2")[0].value);
+    // setLocation(document.getElementsByClassName("sb2")[0].value);
+    dispatch(
+      searchActions.setLocation(document.getElementsByClassName("sb2")[0].value)
+    );
   };
   return (
     <div className="singleBar">

@@ -3,7 +3,6 @@ import * as sessionActions from "../store/session";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faCircleXmark,
@@ -36,7 +35,7 @@ function Login() {
   const [fname, setFName] = useState("");
   const [lname, setLName] = useState("");
   const [uname, setUName] = useState("");
-
+  const [redir, setRedir] = useState();
   const [errors, setErrors] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -46,6 +45,8 @@ function Login() {
   useEffect(() => {
     async function restore() {
       return dispatch(sessionActions.sessionRestore()).catch(async (res) => {
+        console.log("waaaaaaaaaaaaaaaa-------------! Session restore failed!");
+        if (!res.json()) return;
         const data = await res?.json();
         if (data && data.errors) setErrors(data.errors);
       });
@@ -69,10 +70,15 @@ function Login() {
         credential: "demo@demo.com",
         password: "password",
       })
-    ).catch(async (res) => {
-      const data = await res?.json();
-      if (data && data.errors) setErrors(data.errors);
-    });
+    )
+      .catch(async (res) => {
+        const data = await res?.json();
+        if (data && data.errors) setErrors(data.errors);
+      })
+      .finally(() => {
+        console.log("finally");
+        setRedir(<Redirect to="/dashboard" />);
+      });
   };
   const registerValidate = () => {
     const errors = [];
@@ -96,8 +102,10 @@ function Login() {
   }, [credential, password, fname, lname, uname]);
 
   const logout = () => {
-    document.cookie = "authorized=''";
+    document.cookie = "authorized='expired!'";
     dispatch(sessionActions.sessionLogout());
+    console.log("logout");
+    setRedir(<Redirect to="/" />);
   };
   const toggleModal = (e) => {
     setShowModal(!showModal);
@@ -129,14 +137,17 @@ function Login() {
     e.preventDefault();
     validate();
     if (!validationErrors.length)
-      return dispatch(
-        sessionActions.sessionLogin({ credential, password })
-      ).catch(async (res) => {
-        const data = await res?.json();
-        if (data?.message === "Authentication required")
-          setValidationErrors(["Invalid credentials"]);
-        if (data && data.errors) setValidationErrors([...data.errors]);
-      });
+      return dispatch(sessionActions.sessionLogin({ credential, password }))
+        .catch(async (res) => {
+          const data = await res?.json();
+          if (data?.message === "Authentication required")
+            setValidationErrors(["Invalid credentials"]);
+          if (data && data.errors) setValidationErrors([...data.errors]);
+        })
+        .finally(() => {
+          console.log("finally");
+          setRedir(<Redirect to="/dashboard" />);
+        });
   };
   const menu = (
     <ul className="menuList">
@@ -148,6 +159,7 @@ function Login() {
   if (sessionUser) {
     return (
       <div className="user" onClick={toggleMenu} style={style}>
+        {redir}
         <FontAwesomeIcon icon={faCircleUser}></FontAwesomeIcon>
         {showMenu && menu}
       </div>
@@ -156,6 +168,7 @@ function Login() {
   return (
     <>
       <span className="loginButton" onClick={toggleModal}>
+        {redir}
         <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" /> Login
       </span>{" "}
       <span className="loginButton" onClick={toggleRegisterModal}>

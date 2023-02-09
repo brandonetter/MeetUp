@@ -17,12 +17,50 @@ export const sessionLogout = () => async (dispatch) => {
   dispatch(setSession({ user: null }));
 };
 export const sessionRestore = () => async (dispatch) => {
-  const response = await window.fetch(`apiv1/auth`, {
+  const response = await window.fetch(`/apiv1/auth`, {
     method: "GET",
   });
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession({ user: user }));
+  }
+};
+export const addGroup = (group) => async (dispatch) => {
+  let options = {};
+  options.method = "POST";
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(group);
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`apiv1/groups`, options);
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+    // dispatch(setSession({ user: user }));
+  }
+};
+
+export const uploadImage = (image) => async (dispatch) => {
+  let options = {};
+  options.method = "POST";
+  options.headers = options.headers || {};
+  console.log(image);
+  let formData = new FormData();
+  formData.append("image", image);
+  options.body = formData;
+
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`apiv1/uploadImage`, options);
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+    // dispatch(setSession({ user: user }));
   }
 };
 

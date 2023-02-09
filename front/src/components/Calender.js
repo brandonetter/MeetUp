@@ -8,10 +8,12 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
 
 library.add(faArrowLeft, faArrowRight);
-function Calender() {
+function Calender({ small = false, selectable = false, sendDate = null }) {
   const [month, setMonth] = useState(null);
   const [days, setDays] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   //Object containing Months and 0 indexed numbers
   const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const toNum = {
@@ -60,6 +62,25 @@ function Calender() {
     }
     setMonth(toMonth[prev]);
   };
+  const daySelect = (e) => {
+    let formattedDate = e.target.innerText + " " + month + " " + year;
+    let date = new Date(formattedDate);
+    if (!startDate) {
+      setStartDate(formattedDate);
+    } else if (!endDate) {
+      new Date(startDate) < date
+        ? setEndDate(formattedDate)
+        : setStartDate(formattedDate);
+    } else if (startDate && endDate) {
+      setStartDate(formattedDate);
+      setEndDate(null);
+    }
+  };
+  useEffect(() => {
+    if (sendDate) {
+      sendDate(startDate, endDate);
+    }
+  }, [startDate, endDate]);
   useEffect(() => {
     let cdate = date;
     if (month) cdate = new Date(date.getFullYear(), toNum[month], 1);
@@ -78,12 +99,26 @@ function Calender() {
         days.push("");
       }
       while (date.getMonth() === month) {
+        let wordDate =
+          date.getDate() +
+          " " +
+          toMonth[date.getMonth()] +
+          " " +
+          date.getFullYear();
+        console.log(wordDate, startDate, endDate);
         if (
           date.getDate() === new Date().getDate() &&
           date.getMonth() === new Date().getMonth() &&
-          date.getFullYear() === new Date().getFullYear()
+          date.getFullYear() === new Date().getFullYear() &&
+          !selectable
         ) {
           days.push([date.getDate(), "today"]);
+        } else if (wordDate === startDate) {
+          days.push([date.getDate(), "start"]);
+        } else if (wordDate === endDate) {
+          days.push([date.getDate(), "end"]);
+        } else if (date < new Date(endDate) && date > new Date(startDate)) {
+          days.push([date.getDate(), "middle"]);
         } else {
           days.push(new Date(date).getDate());
         }
@@ -92,9 +127,9 @@ function Calender() {
       setDays([...dayLabels, ...days]);
       return days;
     }
-  }, [month]);
+  }, [month, startDate, endDate]);
   return (
-    <div className="mainCal">
+    <div className={!small ? "mainCal" : "mainCal small"}>
       <div className="mainCalDiv">
         <h3>
           {month} {year}
@@ -109,11 +144,17 @@ function Calender() {
       <div className="calGrid">
         {days.map((day) =>
           dayLabels.includes(day) ? (
-            <div className="dayLabel">{day}</div>
+            <div className="dayLabel" onClick={selectable ? daySelect : null}>
+              {day}
+            </div>
           ) : day?.[1] ? (
-            <div className={day[1]}>{day[0]}</div>
+            <div className={day[1]} onClick={selectable ? daySelect : null}>
+              {day[0]}
+            </div>
           ) : (
-            <div className="day">{day}</div>
+            <div className="day" onClick={selectable ? daySelect : null}>
+              {day}
+            </div>
           )
         )}
       </div>
