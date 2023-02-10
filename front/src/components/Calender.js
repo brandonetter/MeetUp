@@ -78,6 +78,7 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
   };
   const prevMonth = (e) => {
     e.preventDefault();
+    //asd
     let prev = toNum[month] - 1;
     if (prev < 0) {
       prev = 11;
