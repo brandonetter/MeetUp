@@ -24,6 +24,26 @@ export const setLocation = (location) => ({
 const clearState = () => ({
   type: CLEAR,
 });
+export const getGroupEvents = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "GET";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${id}/events`, options);
+  if (response.ok) {
+    const events = await response.json();
+    return events;
+  }
+};
+
 export const deleteGroup = (id) => async (dispatch) => {
   let options = {};
   options.method = "DELETE";

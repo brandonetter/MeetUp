@@ -6,9 +6,14 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import * as searchActions from "../store/search";
 
 library.add(faArrowLeft, faArrowRight);
 function Calender({ small = false, selectable = false, sendDate = null }) {
+  const dispatch = useDispatch();
+  const [groups, setGroups] = useState([]);
+  const [events, setEvents] = useState([]);
   const [month, setMonth] = useState(null);
   const [days, setDays] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -44,9 +49,26 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
     10: "November",
     11: "December",
   };
+  useEffect(() => {
+    if (selectable) return;
+    async function getGroupEvents() {
+      const response = await dispatch(searchActions.getUserGroups());
+      setGroups(response);
+      let events = [];
+      for (let i = 0; i < response.length; i++) {
+        let groupEvents = await dispatch(
+          searchActions.getGroupEvents(response[i].id)
+        );
+        events = groupEvents;
+      }
+      setEvents(events.Events);
+    }
+    getGroupEvents();
+  }, []);
 
   const date = new Date();
-  const nextMonth = () => {
+  const nextMonth = (e) => {
+    e.preventDefault();
     let next = toNum[month] + 1;
     if (next > 11) {
       next = 0;
@@ -54,7 +76,8 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
     }
     setMonth(toMonth[next]);
   };
-  const prevMonth = () => {
+  const prevMonth = (e) => {
+    e.preventDefault();
     let prev = toNum[month] - 1;
     if (prev < 0) {
       prev = 11;
@@ -75,6 +98,10 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
       setStartDate(formattedDate);
       setEndDate(null);
     }
+  };
+  const showEvent = (eventId) => {
+    let eventDiv = document.getElementById("event" + eventId);
+    eventDiv.classList.toggle("eventShow");
   };
   useEffect(() => {
     if (sendDate) {
@@ -99,35 +126,69 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
         days.push("");
       }
       while (date.getMonth() === month) {
-        let wordDate =
-          date.getDate() +
-          " " +
-          toMonth[date.getMonth()] +
-          " " +
-          date.getFullYear();
-        console.log(wordDate, startDate, endDate);
-        if (
-          date.getDate() === new Date().getDate() &&
-          date.getMonth() === new Date().getMonth() &&
-          date.getFullYear() === new Date().getFullYear() &&
-          !selectable
-        ) {
-          days.push([date.getDate(), "today"]);
-        } else if (wordDate === startDate) {
-          days.push([date.getDate(), "start"]);
-        } else if (wordDate === endDate) {
-          days.push([date.getDate(), "end"]);
-        } else if (date < new Date(endDate) && date > new Date(startDate)) {
-          days.push([date.getDate(), "middle"]);
-        } else {
-          days.push(new Date(date).getDate());
+        let hasEvent = false;
+        if (events.length)
+          for (let event of events) {
+            console.log(event);
+            let eventDate = new Date(event.startDate);
+            if (eventDate.toDateString() === date.toDateString()) {
+              days.push([date.getDate(), "eventStart", event["id"]]);
+              hasEvent = true;
+            }
+          }
+        if (!hasEvent) {
+          let wordDate =
+            date.getDate() +
+            " " +
+            toMonth[date.getMonth()] +
+            " " +
+            date.getFullYear();
+          console.log(wordDate, startDate, endDate);
+          if (
+            date.getDate() === new Date().getDate() &&
+            date.getMonth() === new Date().getMonth() &&
+            date.getFullYear() === new Date().getFullYear() &&
+            !selectable
+          ) {
+            days.push([date.getDate(), "today"]);
+          } else if (wordDate === startDate) {
+            days.push([date.getDate(), "start"]);
+          } else if (wordDate === endDate) {
+            days.push([date.getDate(), "end"]);
+          } else if (date < new Date(endDate) && date > new Date(startDate)) {
+            days.push([date.getDate(), "middle"]);
+          } else {
+            days.push(new Date(date).getDate());
+          }
         }
         date.setDate(date.getDate() + 1);
       }
       setDays([...dayLabels, ...days]);
+
       return days;
     }
-  }, [month, startDate, endDate]);
+  }, [month, startDate, endDate, events]);
+  const renderEvent = (eventId) => {
+    let event = events.find((event) => event.id === eventId);
+    let startDate = new Date(event.startDate);
+    let endDate = new Date(event.endDate);
+    let startDateFormatted =
+      startDate.getMonth() + 1 + "/" + startDate.getDate();
+    let endDateFormatted = endDate.getMonth() + 1 + "/" + endDate.getDate();
+    return (
+      <div className="eventPopup" onMouseLeave={() => showEvent(eventId)}>
+        <div>
+          <h5>{event.name}</h5>
+        </div>
+        <div>
+          {startDateFormatted} to {endDateFormatted}
+        </div>
+        <div>
+          <button className="eventPopupButton">Go To Event Page</button>
+        </div>
+      </div>
+    );
+  };
   return (
     <div className={!small ? "mainCal" : "mainCal small"}>
       <div className="mainCalDiv">
@@ -148,7 +209,19 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
               {day}
             </div>
           ) : day?.[1] ? (
-            <div className={day[1]} onClick={selectable ? daySelect : null}>
+            <div
+              className={day[1]}
+              onClick={selectable ? daySelect : null}
+              {...(day[2] && { onMouseEnter: () => showEvent(day[2]) })}
+            >
+              {day?.[2] && (
+                <div>
+                  <div className="eventHide" id={"event" + day[2]}>
+                    {renderEvent(day[2])}
+                  </div>
+                  <div className="eventDot"></div>
+                </div>
+              )}
               {day[0]}
             </div>
           ) : (

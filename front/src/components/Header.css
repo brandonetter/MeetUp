@@ -1,8 +1,10 @@
 .HeaderDiv {
+  position: relative;
   overflow: show;
   width: 95vw;
   margin: 0 auto;
   display: flex;
+  z-index: 1;
   justify-content: space-between;
 
   font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
@@ -131,13 +133,14 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
   display: flex;
+  z-index: 1;
   justify-content: center;
   align-items: center;
 }
 .headerModalContent {
   position: relative;
+  z-index: 3 !important;
   width: 50vw;
   height: fit-content;
   background-color: white;
@@ -149,6 +152,8 @@
   align-items: center;
 }
 .headerModalTitle {
+  position: relative;
+  z-index: 3 !important;
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
@@ -206,6 +211,10 @@ textarea {
 .small {
   width: 100%;
 }
+.headerModalForm {
+  position: relative;
+  z-index: 20 !important;
+}
 .headerModalGroupEventDate {
   display: flex;
   flex-direction: row;
@@ -216,6 +225,7 @@ textarea {
 }
 .headerModalCalendarContent {
   position: relative;
+  z-index: 2;
   width: 80%;
   height: 80%;
   display: flex;
@@ -240,6 +250,7 @@ textarea {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 3;
   display: flex;
   flex-direction: row;
   justify-content: center;
