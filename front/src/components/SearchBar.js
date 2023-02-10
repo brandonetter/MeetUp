@@ -48,7 +48,6 @@ function SearchBar({ type }) {
       setLocation(city + " " + state);
     }
     function showPosition(pos) {
-      console.log(pos);
       getAddress(pos.coords.latitude, pos.coords.longitude);
     }
     function posError() {

@@ -54,17 +54,33 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
     async function getGroupEvents() {
       const response = await dispatch(searchActions.getUserGroups());
       setGroups(response);
-      let events = [];
+      let event = [];
       for (let i = 0; i < response.length; i++) {
         let groupEvents = await dispatch(
           searchActions.getGroupEvents(response[i].id)
         );
-        events = groupEvents;
+        event = [...event, ...groupEvents.Events];
       }
-      setEvents(events.Events);
+      setEvents(event);
     }
     getGroupEvents();
   }, []);
+  useEffect(() => {
+    if (selectable) return;
+    async function getGroupEvents() {
+      const response = await dispatch(searchActions.getUserGroups());
+      setGroups(response);
+      let event = [];
+      for (let i = 0; i < response.length; i++) {
+        let groupEvents = await dispatch(
+          searchActions.getGroupEvents(response[i].id)
+        );
+        event = [...event, ...groupEvents.Events];
+      }
+      setEvents(event);
+    }
+    getGroupEvents();
+  }, [month, year]);
 
   const date = new Date();
   const nextMonth = (e) => {
@@ -130,7 +146,6 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
         let hasEvent = false;
         if (events.length)
           for (let event of events) {
-            console.log(event);
             let eventDate = new Date(event.startDate);
             if (eventDate.toDateString() === date.toDateString()) {
               days.push([date.getDate(), "eventStart", event["id"]]);
@@ -144,7 +159,6 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
             toMonth[date.getMonth()] +
             " " +
             date.getFullYear();
-          console.log(wordDate, startDate, endDate);
           if (
             date.getDate() === new Date().getDate() &&
             date.getMonth() === new Date().getMonth() &&

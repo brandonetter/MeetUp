@@ -162,7 +162,6 @@ export const getAllGroups = () => async (dispatch) => {
   });
   if (response.ok) {
     const groups = await response.json();
-    console.log(groups);
     dispatch(setResults(groups));
   }
 };
@@ -231,11 +230,9 @@ export const getAllGroups = () => async (dispatch) => {
 // };
 
 const searchReducer = (state = initialState, action) => {
-  console.log("AAAAAAAAAAAAAAAA");
   switch (action.type) {
     case SETRESULTS:
       state.results = action.payload;
-      console.log(state.results, "asdas");
       return state;
     case SETLOCATION:
       state.location = action.payload;
