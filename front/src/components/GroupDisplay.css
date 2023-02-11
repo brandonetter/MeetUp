@@ -32,11 +32,12 @@
   background-color: rgba(255, 255, 255, 0.558);
   border-radius: 5px;
   margin-top: 10px;
+  margin-left: 10px;
   padding-top: 15px;
   margin-bottom: 10px;
-  width: 60%;
+  width: 80%;
   min-width: 400px;
-  height: 275px;
+  height: 200px;
 }
 .dimmer {
   background-color: rgba(0, 0, 0, 0.5);

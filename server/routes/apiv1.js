@@ -297,8 +297,7 @@ router.post("/groups/:group_id/venues", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
-router.put("/venues/:venue_id", async (req, res) => {
-  // get venue by id
+router.get("/venues/:venue_id", authMiddle, async (req, res) => {
   try {
     let venue = await Venue.findOne({
       where: {
@@ -320,11 +319,33 @@ router.put("/venues/:venue_id", async (req, res) => {
         ],
         [
           Sequelize.literal(
-            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Venue"."groupId" AND "ug"."userId"=${req.userObject.id})`
+            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Venue"."groupId" AND "ug"."userId"=${req.userId})`
           ),
           "ourStatus",
         ],
       ],
+    });
+    if (!venue) {
+      res.statusCode = 404;
+      throw {
+        message: "Venue couldn't be found",
+        statusCode: 404,
+      };
+    }
+    let { createdAt, updatedAt, ...rest } = venue.dataValues;
+    res.json(rest);
+  } catch (e) {
+    res.json(e);
+  }
+});
+
+router.put("/venues/:venue_id", async (req, res) => {
+  // get venue by id
+  try {
+    let venue = await Venue.findOne({
+      where: {
+        id: req.params.venue_id,
+      },
     });
     if (!venue) {
       res.statusCode = 404;
@@ -377,7 +398,7 @@ router.get("/events/all", async (req, res) => {
   }
 });
 
-router.get("/groups/:group_id/events", async (req, res) => {
+router.get("/groups/:group_id/events", authMiddle, async (req, res) => {
   //get all events based on group ID
   try {
     let group = await Group.findOne({
@@ -389,20 +410,45 @@ router.get("/groups/:group_id/events", async (req, res) => {
       res.statusCode = 404;
       throw { message: "Group Not Found" };
     }
-    group.getEvents().then((events) => {
+    group.getEvents(req.userId).then((events) => {
       res.json({ Events: events });
     });
   } catch (e) {
     res.json(e);
   }
 });
-router.get("/events/:event_id", async (req, res) => {
+router.get("/events/:event_id", softAuthMiddle, async (req, res) => {
   //return event based on event id
   try {
     let event = await Event.findOne({
       where: {
         id: req.params.event_id,
       },
+
+      attributes: [
+        "name",
+        "id",
+        "startDate",
+        "endDate",
+        "numAttending",
+        "groupId",
+        "price",
+        "type",
+        "venueId",
+        "capacity",
+        [
+          Sequelize.literal(
+            `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Event"."groupId")`
+          ),
+          "organizerId",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Event"."groupId" AND "ug"."userId"=${req.userId})`
+          ),
+          "ourStatus",
+        ],
+      ],
     });
     if (!event) {
       res.statusCode = 404;

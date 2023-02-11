@@ -1,6 +1,7 @@
 import * as searchActions from "../store/search";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import "./myEvents.css";
 function MyGroups() {
   const [groups, setGroups] = useState([]);
   const dispatch = useDispatch();
@@ -16,7 +17,9 @@ function MyGroups() {
       <h3>Your Groups</h3>
       <ul>
         {groups.map((group) => (
-          <li key={group.id}>{group.name}</li>
+          <li className="myEventListItem" key={group.id}>
+            {group.name}
+          </li>
         ))}
       </ul>
     </div>

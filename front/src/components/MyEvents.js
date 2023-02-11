@@ -1,9 +1,12 @@
 import * as searchActions from "../store/search";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Redirect } from "react-router-dom";
+import "./myEvents.css";
 function MyEvents() {
   const [groups, setGroups] = useState([]);
   const [groupEvents, setGroupEvents] = useState([]);
+  const [redir, setRedir] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
     async function getGroups() {
@@ -39,13 +42,23 @@ function MyEvents() {
         groupIdEvents[event.groupId] = [event];
       }
     });
+    const redirToEvent = (eventId) => {
+      setRedir(<Redirect to={`/events/${eventId}`} />);
+    };
+
     return Object.keys(groupIdEvents).map((groupId) => {
       return (
         <div key={groupId}>
           <h4>{groupIdToName[groupId]}</h4>
           <ul>
             {groupIdEvents[groupId].map((event) => (
-              <li key={event.id}>{event.name}</li>
+              <li
+                className="myEventListItem"
+                key={event.id}
+                onClick={() => redirToEvent(event.id)}
+              >
+                {event.name}
+              </li>
             ))}
           </ul>
         </div>
@@ -54,6 +67,7 @@ function MyEvents() {
   };
   return (
     <div>
+      {redir}
       <h3>Your Events</h3>
       <ul>{renderEvents()}</ul>
     </div>

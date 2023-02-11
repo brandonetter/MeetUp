@@ -40,7 +40,6 @@ function GroupPage() {
   const dispatch = useDispatch();
   const params = useParams();
   const groupId = params.groupId;
-  console.log(params, "params");
   async function getAddress(
     lat,
     long,
@@ -56,28 +55,24 @@ function GroupPage() {
       //search for the state
       for (let a of r.address_components) {
         if (a.types.includes("administrative_area_level_1")) {
-          console.log(a.long_name, "state");
           setState(a.short_name);
         }
       }
       //search for the city
       for (let a of r.address_components) {
         if (a.types.includes("locality")) {
-          console.log(a.long_name, "city");
           setCity(a.long_name);
         }
       }
       let address = "";
       for (let a of r.address_components) {
         if (a.types.includes("street_number")) {
-          console.log(a.long_name, "number");
           address = a.long_name;
         }
       }
       //search for the street address
       for (let a of r.address_components) {
         if (a.types.includes("route")) {
-          console.log(a.long_name, "street");
           address += " " + a.long_name;
         }
       }
@@ -85,9 +80,6 @@ function GroupPage() {
       //search for the street number
     }
   }
-  useEffect(() => {
-    console.log(sessionUser, "sessionUser");
-  }, [sessionUser]);
   useEffect(() => {
     async function getGroup() {
       let group = await dispatch(searchActions.getGroupById(groupId));
@@ -99,20 +91,14 @@ function GroupPage() {
         }
       }
 
-      console.log(sessionUser?.id, "sessionUser?.id");
-      console.log(organizer?.id, "organizer?.id");
-      console.log(group, "group");
       if (sessionUser?.id === group?.organizerId && sessionUser.id) {
         setIsAdmin(true);
       }
     }
     getGroup();
-
-    console.log(group, "group");
   }, [dispatch, groupId, sessionUser]);
   const deleteGroup = async () => {
     const res = await dispatch(searchActions.deleteGroup(groupId));
-    console.log("RES", res);
     if (res.statusCode === 200) {
       setRedir(<Redirect to="/dashboard"></Redirect>);
     }
@@ -130,7 +116,6 @@ function GroupPage() {
         groupId
       )
     );
-    console.log("RES", res);
     if (res.id) {
       setRedir(<Redirect to="/dashboard"></Redirect>);
     }

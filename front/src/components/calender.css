@@ -27,13 +27,14 @@
   justify-content: center;
 }
 .mainCalDiv {
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .calGrid {
   position: relative;
-  z-index: 0;
+  z-index: 10;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -51,6 +52,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  z-index: -1;
   border: 1px solid rgba(0, 0, 0, 0.278);
 }
 .today {
@@ -87,20 +89,20 @@
   width: 100%;
   height: 100%;
   background-color: #f7877347;
-  z-index: 1;
+  z-index: 10;
   border-radius: 5px 5px 5px 5px;
   border: 1px solid rgba(0, 0, 0, 0.278);
 }
 .eventPopup {
   position: absolute;
-  z-index: 20;
+
   padding: 5px;
   top: -80px;
   padding-top: 0px;
   transform: translateX(-50%);
   width: 160px;
   height: 120px;
-  background-color: #f6ddd8e7;
+  background-color: #f6ddd8;
   border-radius: 5px 5px 5px 5px;
   border: 1px solid rgba(0, 0, 0, 0.278);
 }
@@ -117,20 +119,18 @@
   cursor: pointer;
 }
 .eventHide {
-  position: relative;
+  position: absolute;
+
   opacity: 0;
-  z-index: 0;
+  z-index: 20;
   user-select: none;
   pointer-events: none;
-  transition: opacity 0.5s;
 }
 .eventShow {
-  position: absolute;
-  z-index: 1;
+  background-color: #f6ddd8;
+  width: 2000px;
   opacity: 1;
-  user-select: none;
   pointer-events: auto;
-  transition: opacity 0.5s;
 }
 .eventDot {
   position: absolute;

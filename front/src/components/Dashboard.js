@@ -10,13 +10,13 @@ function Dashboard() {
     <div className="mainDash">
       <h1>Welcome, {user?.username}👋</h1>
       <div className="content">
-        <div>
+        <div className="leftBar">
           <h3 className="dashTitle">Events From Your Groups</h3>
           <Calender />
           <MyGroups />
           <MyEvents />
         </div>
-        <div>
+        <div className="rightBar">
           <GroupDisplay />
         </div>
       </div>

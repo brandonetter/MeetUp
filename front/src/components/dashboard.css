@@ -28,3 +28,10 @@
   grid-gap: 1rem;
   grid-template-columns: 0.4fr 1fr;
 }
+.leftBar {
+  width: 100%;
+  margin-left: 25%;
+}
+.rightBar {
+  margin-left: 10%;
+}

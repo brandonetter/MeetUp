@@ -93,6 +93,15 @@ export const getGroupVenues = (id) => async (dispatch) => {
     return venues;
   }
 };
+export const getVenueById = (id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/venues/${id}`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const venue = await response.json();
+    return venue;
+  }
+};
 
 export const getUserGroups = () => async (dispatch) => {
   const response = await window.fetch(`/apiv1/groups`, {
@@ -143,6 +152,15 @@ export const addVenue = (venueData, id) => async (dispatch) => {
   if (response.ok) {
     const venue = await response.json();
     return venue;
+  }
+};
+export const getEventById = (id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/events/${id}`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const event = await response.json();
+    return event;
   }
 };
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as searchActions from "../store/search";
 import { useDispatch } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import {
   GoogleMap,
@@ -17,6 +18,7 @@ import GMap from "./GMap";
 library.add(faCircleXmark, faUpRightAndDownLeftFromCenter);
 function GroupCard({ img, group, location }) {
   const dispatch = useDispatch();
+  const [redir, setRedir] = useState(null);
   const [expand, setExpand] = useState(false);
   const [distance, setDistance] = useState(0);
   const [coords, setCoords] = useState([0, 0]);
@@ -51,6 +53,7 @@ function GroupCard({ img, group, location }) {
 
   return (
     <div className={expand ? "dimmer" : ""}>
+      {redir}
       <div
         className={expand ? "groupCard expand" : "groupCard"}
         onClick={toggleExpand}
@@ -116,7 +119,7 @@ function GroupCard({ img, group, location }) {
           <button
             className="groupPageButton"
             onClick={() => {
-              window.location.href = `/groups/${group.id}`;
+              setRedir(<Redirect to={`/groups/${group.id}`} />);
             }}
           >
             Go To Group Page

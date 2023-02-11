@@ -1,0 +1,17 @@
+.myEventListItem {
+  display: flex;
+  color: #646464;
+  font-size: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.278);
+  flex-direction: column;
+  width: fit-content;
+  height: 100%;
+  margin: 0;
+  margin-bottom: 1rem;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+}
+.myEventListItem:hover {
+  background-color: #d8f3f6;
+}

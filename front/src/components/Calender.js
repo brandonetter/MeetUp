@@ -8,7 +8,7 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import * as searchActions from "../store/search";
-
+import { Redirect } from "react-router-dom";
 library.add(faArrowLeft, faArrowRight);
 function Calender({ small = false, selectable = false, sendDate = null }) {
   const dispatch = useDispatch();
@@ -19,6 +19,7 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [redir, setRedir] = useState(null);
   //Object containing Months and 0 indexed numbers
   const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const toNum = {
@@ -116,7 +117,13 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
       setEndDate(null);
     }
   };
-  const showEvent = (eventId) => {
+  const showEvent = (eventId, e) => {
+    let oldZ = e.target.style.zIndex;
+    e.target.style.zIndex = 100;
+    e.target.addEventListener("mouseleave", () => {
+      e.target.style.zIndex = oldZ;
+      eventDiv.classList.remove("eventShow");
+    });
     let eventDiv = document.getElementById("event" + eventId);
     eventDiv.classList.toggle("eventShow");
   };
@@ -183,6 +190,9 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
       return days;
     }
   }, [month, startDate, endDate, events]);
+  const redirToEvent = (eventId) => {
+    setRedir(<Redirect to={`/events/${eventId}`} />);
+  };
   const renderEvent = (eventId) => {
     let event = events.find((event) => event.id === eventId);
     let startDate = new Date(event.startDate);
@@ -199,13 +209,19 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
           {startDateFormatted} to {endDateFormatted}
         </div>
         <div>
-          <button className="eventPopupButton">Go To Event Page</button>
+          <button
+            className="eventPopupButton"
+            onClick={() => redirToEvent(event.id)}
+          >
+            Go To Event Page
+          </button>
         </div>
       </div>
     );
   };
   return (
     <div className={!small ? "mainCal" : "mainCal small"}>
+      {redir}
       <div className="mainCalDiv">
         <h3>
           {month} {year}
@@ -218,7 +234,7 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
         </button>
       </div>
       <div className="calGrid">
-        {days.map((day) =>
+        {days.map((day, index) =>
           dayLabels.includes(day) ? (
             <div className="dayLabel" onClick={selectable ? daySelect : null}>
               {day}
@@ -226,9 +242,11 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
           ) : day?.[1] ? (
             <div
               className={day[1]}
+              style={{ zIndex: 99 - index }}
               onClick={selectable ? daySelect : null}
-              {...(day[2] && { onMouseEnter: () => showEvent(day[2]) })}
+              {...(day[2] && { onMouseEnter: (e) => showEvent(day[2], e) })}
             >
+              {day[0]}
               {day?.[2] && (
                 <div>
                   <div className="eventHide" id={"event" + day[2]}>
@@ -237,7 +255,6 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
                   <div className="eventDot"></div>
                 </div>
               )}
-              {day[0]}
             </div>
           ) : (
             <div className="day" onClick={selectable ? daySelect : null}>
