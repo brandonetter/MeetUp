@@ -19,7 +19,7 @@ async function authMiddle(req, res, next) {
   const authHeader = req?.cookies?.authorized || null;
   const token = authHeader;
   if (token == null) {
-    res.statusCode = 401;
+    // res.statusCode = 401;
     return res.json({
       message: "Authentication required",
       statusCode: 401,
@@ -33,7 +33,7 @@ async function authMiddle(req, res, next) {
     req.userId = rest.id;
     req.userObject = user;
   } catch {
-    res.statusCode = 401;
+    // res.statusCode = 401;
     return res.json({
       message: "Authentication required",
       statusCode: 401,
