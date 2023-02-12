@@ -49,6 +49,15 @@ module.exports = (sequelize, DataTypes) => {
         return null;
       }
     };
+    getImages = async function () {
+      let images = await sequelize.models.Image.findAll({
+        where: {
+          eventId: this.id,
+        },
+      });
+      return images;
+    };
+
     static addNewImage = async (data) => {
       let { userId, ...ob } = data;
 

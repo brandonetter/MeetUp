@@ -1,10 +1,12 @@
 .mainCal {
+  position: relative;
   background-color: #f2f2f2;
   width: 100%;
   display: flex;
   flex-direction: column;
   padding: 10px 10px;
   margin: 0;
+  z-index: 0;
   border: 1px solid rgba(0, 0, 0, 0.292);
   height: 300px;
   border-radius: 5px;
@@ -25,11 +27,14 @@
   justify-content: center;
 }
 .mainCalDiv {
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .calGrid {
+  position: relative;
+  z-index: 10;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -47,6 +52,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  z-index: -1;
   border: 1px solid rgba(0, 0, 0, 0.278);
 }
 .today {
@@ -72,6 +78,71 @@
   background-color: #73d8f7;
   border-radius: 5px 0 0 5px;
   border: 1px solid rgba(0, 0, 0, 0.278);
+}
+.eventStart {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f7877347;
+  z-index: 10;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid rgba(0, 0, 0, 0.278);
+}
+.eventPopup {
+  position: absolute;
+
+  padding: 5px;
+  top: -150px;
+  padding-top: 0px;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 120px;
+  background-color: #f6ddd8;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid rgba(0, 0, 0, 0.278);
+}
+.eventPopupButton {
+  width: 100% !important;
+  height: 20px;
+  background-color: #f75a5a;
+  border: 1px solid rgba(0, 0, 0, 0.278);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: white;
+  cursor: pointer;
+}
+.eventHide {
+  position: absolute;
+
+  opacity: 0;
+  z-index: 20;
+  user-select: none;
+  pointer-events: none;
+}
+.eventShow {
+  background-color: #f6ddd8;
+  width: 2000px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.eventDot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #f75a5a;
+  margin: 1px;
+  padding: 0;
+  z-index: 0;
 }
 .middle {
   box-sizing: border-box;

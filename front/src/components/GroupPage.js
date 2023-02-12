@@ -5,20 +5,21 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import { useEffect, useState } from "react";
 import "./groupPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { useHistory } from "react-router-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faLocationArrow,
   faPeopleArrows,
-  faU,
+  faInfoCircle,
   faArrowLeft as faBackward,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import GMap from "./GMap";
 
-library.add(faLocationArrow, faPeopleArrows, faUser, faBackward);
+library.add(faLocationArrow, faPeopleArrows, faUser, faBackward, faInfoCircle);
 function GroupPage() {
   const [markerPos, setMarkerPos] = useState([40, -100]);
+  const history = useHistory();
   const setGMapPosition = (e) => {
     getAddress(e.latLng.lat(), e.latLng.lng());
     setMarkerPos([e.latLng.lat(), e.latLng.lng()]);
@@ -29,18 +30,61 @@ function GroupPage() {
   const [group, setGroup] = useState([]);
   const [preview, setPreview] = useState();
   const [organizer, setOrganizer] = useState();
+  const [members, setMembers] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [redir, setRedir] = useState("");
+  const [pendingMembers, setPendingMembers] = useState([]);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [address, setAddress] = useState("");
   const [lat, setLat] = useState(40);
   const [long, setLong] = useState(-100);
-
+  const [ourStatus, setOurStatus] = useState("");
   const dispatch = useDispatch();
   const params = useParams();
   const groupId = params.groupId;
-  console.log(params, "params");
+
+  const confirmPending = async (user_id) => {
+    const response = await dispatch(
+      searchActions.confirmPending(groupId, user_id)
+    );
+    if (response.id) {
+      history.go(0);
+    }
+  };
+  const removePending = async (user_id) => {
+    const response = await dispatch(
+      searchActions.removePending(groupId, user_id)
+    );
+
+    if (response.message) {
+      history.go(0);
+    }
+  };
+
+  const submitJoin = async (e) => {
+    e.preventDefault();
+    const response = await dispatch(searchActions.joinGroup(groupId));
+    if (response === "success") {
+      setOurStatus("pending");
+    }
+    history.go(0);
+  };
+  const submitLeave = async (e) => {
+    e.preventDefault();
+    const response = await dispatch(
+      searchActions.leaveGroup(groupId, sessionUser.id)
+    );
+    if (response === "success") {
+      setOurStatus("");
+    }
+    history.go(0);
+  };
+
+  const isAdminToolTip = (opacity) => {
+    let div = document.getElementById("isAdminToolTip");
+    div.style.opacity = opacity;
+  };
   async function getAddress(
     lat,
     long,
@@ -56,28 +100,24 @@ function GroupPage() {
       //search for the state
       for (let a of r.address_components) {
         if (a.types.includes("administrative_area_level_1")) {
-          console.log(a.long_name, "state");
           setState(a.short_name);
         }
       }
       //search for the city
       for (let a of r.address_components) {
         if (a.types.includes("locality")) {
-          console.log(a.long_name, "city");
           setCity(a.long_name);
         }
       }
       let address = "";
       for (let a of r.address_components) {
         if (a.types.includes("street_number")) {
-          console.log(a.long_name, "number");
           address = a.long_name;
         }
       }
       //search for the street address
       for (let a of r.address_components) {
         if (a.types.includes("route")) {
-          console.log(a.long_name, "street");
           address += " " + a.long_name;
         }
       }
@@ -86,33 +126,39 @@ function GroupPage() {
     }
   }
   useEffect(() => {
-    console.log(sessionUser, "sessionUser");
-  }, [sessionUser]);
-  useEffect(() => {
     async function getGroup() {
       let group = await dispatch(searchActions.getGroupById(groupId));
       setGroup(group);
       setOrganizer(group.Organizer);
+      let membersList = await dispatch(
+        searchActions.getMembersByGroupId(groupId)
+      );
+      //Search membersList.Users to see if the current user is a member
+      let pendingMembers = [];
+      for (let m of membersList.Users) {
+        if (m.id === sessionUser?.id) {
+          console.log(m.Membership.status);
+          setOurStatus(m.Membership.status);
+        }
+        if (m.Membership.status === "pending") pendingMembers.push(m);
+      }
+      setPendingMembers(pendingMembers);
+
+      setMembers(membersList.Users);
       for (let im of group.GroupImages) {
         if (im.preview) {
           setPreview("/imagebin/" + im.url);
         }
       }
 
-      console.log(sessionUser?.id, "sessionUser?.id");
-      console.log(organizer?.id, "organizer?.id");
-      console.log(group, "group");
       if (sessionUser?.id === group?.organizerId && sessionUser.id) {
         setIsAdmin(true);
       }
     }
     getGroup();
-
-    console.log(group, "group");
   }, [dispatch, groupId, sessionUser]);
   const deleteGroup = async () => {
     const res = await dispatch(searchActions.deleteGroup(groupId));
-    console.log("RES", res);
     if (res.statusCode === 200) {
       setRedir(<Redirect to="/dashboard"></Redirect>);
     }
@@ -130,7 +176,6 @@ function GroupPage() {
         groupId
       )
     );
-    console.log("RES", res);
     if (res.id) {
       setRedir(<Redirect to="/dashboard"></Redirect>);
     }
@@ -166,7 +211,38 @@ function GroupPage() {
       case "Members":
         return (
           <div className="groupPageAdminPanel">
-            <div>Members</div>
+            <h1>Members</h1>
+            {members.map((m) => (
+              <div key={m.id}>
+                <div>
+                  {m.firstname} {m.lastname}{" "}
+                  {m.Membership.status === "pending" && (
+                    <span className="pending">Pending</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case "ManageMembers":
+        return (
+          <div className="groupPageAdminPanel">
+            <h1>Pending Members</h1>
+            {pendingMembers.map((m) => (
+              <div key={m.id}>
+                <div>
+                  {m.firstname} {m.lastname}{" "}
+                  {m.Membership.status === "pending" && (
+                    <div className="pendingControls">
+                      <button onClick={() => confirmPending(m.id)}>Add</button>
+                      <button onClick={() => removePending(m.id)}>
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         );
       case "Events":
@@ -190,6 +266,9 @@ function GroupPage() {
             <button onClick={() => setCurrent("Update")}>Update Group</button>
             <button onClick={deleteGroup}>Delete Group</button>
             <button onClick={() => setCurrent("Venue")}>Add Venue</button>
+            <button onClick={() => setCurrent("ManageMembers")}>
+              Manage Members
+            </button>
           </div>
         );
       case "Venue":
@@ -326,7 +405,35 @@ function GroupPage() {
               </div>
             )}
           </div>
-          <div className="groupPageMenuButton Join">Join Group</div>
+
+          <div className="isAdminToolTip" id="isAdminToolTip">
+            <FontAwesomeIcon icon={faInfoCircle}></FontAwesomeIcon>
+            <div className="isAdminToolTipText">
+              You are the organizer of this group, To leave this group, you must
+              first transfer ownership to another member.
+            </div>
+          </div>
+          {isAdmin ? (
+            <div
+              className="groupPageMenuButton JoinDisabled"
+              onMouseOver={() => isAdminToolTip("1")}
+              onMouseOut={() => isAdminToolTip("0")}
+            >
+              Leave Group
+            </div>
+          ) : ourStatus === "member" ? (
+            <div className="groupPageMenuButton Leave" onClick={submitLeave}>
+              Leave Group
+            </div>
+          ) : ourStatus === "pending" ? (
+            <div className="groupPageMenuButton Join" onClick={submitLeave}>
+              Cancel Request
+            </div>
+          ) : (
+            <div className="groupPageMenuButton Join" onClick={submitJoin}>
+              Join Group
+            </div>
+          )}
         </div>
         <div className="groupPageMenuContent">{renderPage()}</div>
       </div>

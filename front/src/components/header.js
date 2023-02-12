@@ -65,7 +65,6 @@ function Header() {
     async function getUserGroups() {
       let userGroups = await dispatch(searchActions.getUserGroups());
       //filter groups where the user ID doesn't match the organizer ID
-      console.log(sessionUser);
       userGroups = userGroups.filter(
         (group) => group.organizerId === sessionUser?.id
       );
@@ -162,18 +161,14 @@ function Header() {
     formData.groupId = e?.target[0].value;
     formData.capacity = e?.target[5].value;
     formData.price = e?.target[6].value;
-    console.log(formData);
     const event = dispatch(searchActions.addEvent(formData, formData.groupId));
-    console.log(event);
     setAddEventModal(false);
   };
 
   const submitGroup = async (e) => {
     e.preventDefault();
-    console.log(e.target);
     const imageUpload = e.target[3]?.files[0];
     const formData = {};
-    console.log(imageUpload);
     if (imageUpload) {
       //send image to /apiv1/uploadImage
       //get the url back
@@ -217,7 +212,6 @@ function Header() {
     // use searchAction to get venues
     let res = await dispatch(searchActions.getGroupVenues(groupId));
     setVenues(res.Venues);
-    console.log(res);
   };
 
   function setScroll(bool) {
@@ -392,29 +386,32 @@ function Header() {
               </div>
               <label className="headerModalLabel">Event Date</label>
               <div className="headerModalGroupEventDate">
-                <div onClick={toggleShowCal}>Select Date</div>
+                {showCal && (
+                  <div className="headerModalCalendarModal">
+                    <div className="headerModalCalendarContent">
+                      <div className="headerModalCalendarXButton">
+                        <FontAwesomeIcon
+                          icon={faCircleXmark}
+                          onClick={toggleShowCal}
+                        ></FontAwesomeIcon>
+                      </div>
+                      <div className="headerModalCalendar">
+                        <Calender
+                          small
+                          selectable
+                          sendDate={updateDate}
+                        ></Calender>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div onClick={toggleShowCal} className="divButton">
+                  Select Date
+                </div>
                 <input className="headerModalInput" value={startDate}></input>
                 <input className="headerModalInput" value={endDate}></input>
               </div>
-              {showCal && (
-                <div className="headerModalCalendarModal">
-                  <div className="headerModalCalendarContent">
-                    <div className="headerModalCalendarXButton">
-                      <FontAwesomeIcon
-                        icon={faCircleXmark}
-                        onClick={toggleShowCal}
-                      ></FontAwesomeIcon>
-                    </div>
-                    <div className="headerModalCalendar">
-                      <Calender
-                        small
-                        selectable
-                        sendDate={updateDate}
-                      ></Calender>
-                    </div>
-                  </div>
-                </div>
-              )}
+
               <button
                 type="submit"
                 className="headerModalButton"

@@ -3,6 +3,7 @@
   width: 95vw;
   margin: 0 auto;
   display: flex;
+  z-index: 1;
   justify-content: space-between;
 
   font-family: Graphik Meetup, -apple-system, BlinkMacSystemFont, Roboto,
@@ -42,7 +43,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 50%;
+  width: max(100%, 300px);
   margin: 0;
   font-size: 1.2rem;
   color: #414141;
@@ -131,13 +132,14 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
   display: flex;
+  z-index: 1;
   justify-content: center;
   align-items: center;
 }
 .headerModalContent {
   position: relative;
+  z-index: 3 !important;
   width: 50vw;
   height: fit-content;
   background-color: white;
@@ -149,6 +151,8 @@
   align-items: center;
 }
 .headerModalTitle {
+  position: relative;
+  z-index: 3 !important;
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
@@ -206,6 +210,10 @@ textarea {
 .small {
   width: 100%;
 }
+.headerModalForm {
+  position: relative;
+  z-index: 20 !important;
+}
 .headerModalGroupEventDate {
   display: flex;
   flex-direction: row;
@@ -216,8 +224,9 @@ textarea {
 }
 .headerModalCalendarContent {
   position: relative;
-  width: 80%;
-  height: 80%;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
   display: flex;
   background-color: rgba(255, 255, 255, 0.847);
   justify-content: center;
@@ -236,17 +245,36 @@ textarea {
   align-items: center;
   cursor: pointer;
 }
+.divButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 40px;
+  background-color: #5aaafb;
+  border-radius: 5px;
+  color: azure;
+  font-size: 1.5rem;
+  user-select: none;
+  cursor: pointer;
+}
+.divButton:hover {
+  background-color: #81bdf9;
+}
 .headerModalCalendarModal {
   position: absolute;
   top: 0;
   left: 0;
+  transform: translate(0%, 40%);
+  filter: drop-shadow(0 0 0.75rem #0000006c);
+  z-index: 3;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 100%;
+  width: fit-content;
+  height: fit-content;
 }
 .headerModalGroupEventDate .headerModalInput {
   width: 50%;

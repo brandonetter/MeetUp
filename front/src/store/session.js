@@ -55,7 +55,7 @@ export const uploadImage = (image) => async (dispatch) => {
   if (options.method.toUpperCase() !== "GET") {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
-  const response = await window.fetch(`apiv1/uploadImage`, options);
+  const response = await window.fetch(`/apiv1/uploadImage`, options);
   if (response.status >= 400) throw response;
   if (response.ok) {
     const res = await response.json();

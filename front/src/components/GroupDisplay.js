@@ -21,7 +21,6 @@ function GroupDisplay() {
   const [sortedResults, setSortedResults] = useState([]);
   const [finalResults, setFinalResults] = useState([]);
   useEffect(() => {
-    console.log(results);
     setFinalResults([]);
     async function sortedRes() {
       const tempRest = results?.map(async (result) => {
@@ -41,7 +40,6 @@ function GroupDisplay() {
     async function waitSort() {
       let res = [];
       for await (let r of sortedResults) {
-        console.log("yeahh");
         if (r.distance) {
           if (r.distance.includes(",")) {
             r.distance = r.distance.split(",")[0] + r.distance.split(",")[1];

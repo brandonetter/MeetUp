@@ -297,8 +297,7 @@ router.post("/groups/:group_id/venues", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
-router.put("/venues/:venue_id", async (req, res) => {
-  // get venue by id
+router.get("/venues/:venue_id", authMiddle, async (req, res) => {
   try {
     let venue = await Venue.findOne({
       where: {
@@ -320,11 +319,33 @@ router.put("/venues/:venue_id", async (req, res) => {
         ],
         [
           Sequelize.literal(
-            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Venue"."groupId" AND "ug"."userId"=${req.userObject.id})`
+            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Venue"."groupId" AND "ug"."userId"=${req.userId})`
           ),
           "ourStatus",
         ],
       ],
+    });
+    if (!venue) {
+      res.statusCode = 404;
+      throw {
+        message: "Venue couldn't be found",
+        statusCode: 404,
+      };
+    }
+    let { createdAt, updatedAt, ...rest } = venue.dataValues;
+    res.json(rest);
+  } catch (e) {
+    res.json(e);
+  }
+});
+
+router.put("/venues/:venue_id", async (req, res) => {
+  // get venue by id
+  try {
+    let venue = await Venue.findOne({
+      where: {
+        id: req.params.venue_id,
+      },
     });
     if (!venue) {
       res.statusCode = 404;
@@ -377,7 +398,7 @@ router.get("/events/all", async (req, res) => {
   }
 });
 
-router.get("/groups/:group_id/events", async (req, res) => {
+router.get("/groups/:group_id/events", authMiddle, async (req, res) => {
   //get all events based on group ID
   try {
     let group = await Group.findOne({
@@ -389,20 +410,46 @@ router.get("/groups/:group_id/events", async (req, res) => {
       res.statusCode = 404;
       throw { message: "Group Not Found" };
     }
-    group.getEvents().then((events) => {
+    group.getEvents(req.userId).then((events) => {
       res.json({ Events: events });
     });
   } catch (e) {
     res.json(e);
   }
 });
-router.get("/events/:event_id", async (req, res) => {
+router.get("/events/:event_id", softAuthMiddle, async (req, res) => {
   //return event based on event id
   try {
     let event = await Event.findOne({
       where: {
         id: req.params.event_id,
       },
+
+      attributes: [
+        "name",
+        "id",
+        "startDate",
+        "endDate",
+        "numAttending",
+        "groupId",
+        "price",
+        "type",
+        "venueId",
+        "capacity",
+        "description",
+        [
+          Sequelize.literal(
+            `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Event"."groupId")`
+          ),
+          "organizerId",
+        ],
+        [
+          Sequelize.literal(
+            `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Event"."groupId" AND "ug"."userId"=${req.userId})`
+          ),
+          "ourStatus",
+        ],
+      ],
     });
     if (!event) {
       res.statusCode = 404;
@@ -461,9 +508,71 @@ router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
+router.delete("/events/:event_id", authMiddle, async (req, res) => {
+  try {
+    let event = await Event.findOne({
+      where: {
+        id: req.params.event_id,
+      },
+    });
+    if (!event) {
+      res.statusCode = 404;
+      throw {
+        message: "Event couldn't be found",
+        statusCode: 404,
+      };
+    }
+    //find group organizer
+    let group = await Group.findOne({
+      where: {
+        id: event.groupId,
+      },
+    });
+    if (!group) {
+      res.statusCode = 404;
+      throw {
+        message: "Group couldn't be found",
+        statusCode: 404,
+      };
+    }
+
+    if (group.organizerId != req.userObject.id) {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the organizer of this Event's Group",
+        statusCode: 401,
+      };
+    }
+    await event.destroy();
+    res.json({
+      message: "Successfully deleted",
+      statusCode: 200,
+    });
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.get("/events/:event_id/images", softAuthMiddle, async (req, res) => {
+  try {
+    let event = await Event.findOne({
+      where: {
+        id: req.params.event_id,
+      },
+    });
+    if (!event) {
+      res.statusCode = 404;
+      throw { message: "Event couldn't be found" };
+    }
+    let images = await event.getImages();
+    res.json(images);
+  } catch (e) {
+    res.json(e);
+  }
+});
 
 router.post("/events/:event_id/image", authMiddle, async (req, res) => {
   try {
+    console.log(req.body);
     let ob = t.tidy(Image, req.body);
     ob.userId = req.userId;
     ob.eventId = req.params.event_id;
@@ -476,6 +585,7 @@ router.post("/events/:event_id/image", authMiddle, async (req, res) => {
       res.statusCode = 404;
       throw { message: "Event couldn't be found" };
     }
+    console.log(ob);
     let result = await Event.addNewImage(ob);
 
     res.json(result);
@@ -539,7 +649,10 @@ router.get("/groups/:group_id/members", softAuthMiddle, (req, res) => {
           delete user.UserGroup.dataValues;
           delete user.dataValues.username;
           delete user.dataValues.email;
-          if (group.organizerId != req.userId) {
+          if (
+            group.organizerId != req.userId &&
+            req?.userId != user.dataValues.id
+          ) {
             if (user.dataValues.Membership.status == "pending") {
               delete users[i];
             }
@@ -713,7 +826,7 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
             id: userGroup.groupId,
           },
         });
-        grup.numMembers -= 1;
+        if (userGroup.status !== "pending") grup.numMembers -= 1;
         await grup.save();
         await userGroup.destroy();
         res.json({

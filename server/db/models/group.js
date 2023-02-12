@@ -109,11 +109,36 @@ module.exports = (sequelize, DataTypes) => {
       });
       return venues;
     };
-    getEvents = async function () {
+    getEvents = async function (ud) {
       let events = await sequelize.models.Event.findAll({
         where: {
           groupId: this.id,
         },
+        attributes: [
+          "id",
+          "name",
+          "startDate",
+          "endDate",
+          "numAttending",
+          "groupId",
+          "price",
+          "type",
+          "venueId",
+          "capacity",
+          "description",
+          [
+            sequelize.literal(
+              `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Event"."groupId")`
+            ),
+            "organizerId",
+          ],
+          [
+            sequelize.literal(
+              `(SELECT "ug"."status" from "UserGroups" as "ug" WHERE "ug"."groupId"="Event"."groupId" AND "ug"."userId"=${ud})`
+            ),
+            "ourStatus",
+          ],
+        ],
       });
       events = events.map((ven) => {
         let { createdAt, updatedAt, ...rest } = ven.dataValues;

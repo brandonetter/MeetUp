@@ -44,6 +44,8 @@ input {
   flex-direction: row;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  right: 15px;
 }
 .menuList {
   position: absolute;

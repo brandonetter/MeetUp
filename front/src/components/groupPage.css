@@ -159,6 +159,52 @@
   border: 1px solid rgb(58, 58, 58);
   border-radius: 5px;
 }
+.JoinDisabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  padding: 0px;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgb(108, 107, 107);
+  cursor: pointer;
+  background-color: rgb(247, 196, 196);
+  border: 1px solid rgb(58, 58, 58);
+  border-radius: 5px;
+}
+.pending {
+  color: rgb(95, 94, 94);
+  cursor: pointer;
+  border-radius: 5px;
+}
+.isAdminToolTip {
+  user-select: none;
+  opacity: 0;
+  position: absolute;
+  top: 320px;
+  left: 600px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(58, 58, 58);
+  padding: 10px;
+}
+.pendingControls {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 20%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+.JoinDisabled:hover {
+  color: rgb(108, 107, 107) !important;
+  cursor: pointer;
+}
 .groupPageMenuButton:hover {
   color: rgb(97, 185, 223);
 }
@@ -225,4 +271,20 @@
 }
 .groupPageAdminPanel button:hover {
   background-color: rgb(97, 185, 223);
+}
+.loadingImage {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

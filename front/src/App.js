@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 import Landing from "./components/Landing";
 import GroupPage from "./components/GroupPage";
+import EventPage from "./components/EventPage";
 import Dashboard from "./components/Dashboard";
 import { useSelector } from "react-redux";
 function App() {
@@ -36,6 +37,9 @@ function App() {
         </Route>
         <Route path="/groups/:groupId">
           <GroupPage />
+        </Route>
+        <Route path="/events/:id">
+          <EventPage />
         </Route>
       </Switch>
     </BrowserRouter>

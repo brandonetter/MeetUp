@@ -24,6 +24,179 @@ export const setLocation = (location) => ({
 const clearState = () => ({
   type: CLEAR,
 });
+
+export const joinGroup = (group_id) => async (dispatch) => {
+  let options = {};
+  options.method = "GET";
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${group_id}/join`);
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const removePending = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  options.body = JSON.stringify({ memberId: user_id });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const confirmPending = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "PUT";
+  options.body = JSON.stringify({ memberId: user_id, status: "member" });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const leaveGroup = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  options.body = JSON.stringify({ memberId: user_id });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const getEventImages = (event_id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/events/${event_id}/images`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const images = await response.json();
+    return images;
+  }
+};
+export const getMembersByGroupId = (group_id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/groups/${group_id}/members`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const members = await response.json();
+    return members;
+  }
+};
+
+export const updateEvent = (event, event_id) => async (dispatch) => {
+  let options = {};
+  console.log(event);
+  options.method = "PUT";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  options.body = JSON.stringify(event);
+  console.log(options);
+  const response = await window.fetch(`/apiv1/events/${event_id}`, options);
+  const data = await response.json();
+  return data;
+};
+
+export const deleteEvent = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/events/${id}`, options);
+  const data = await response.json();
+  return data;
+};
+
+export const getEventAttendees = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "GET";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/events/${id}/attendees`, options);
+  const data = await response.json();
+  return data;
+};
+
+export const getGroupEvents = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "GET";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${id}/events`, options);
+  if (response.ok) {
+    const events = await response.json();
+    return events;
+  }
+};
+
 export const deleteGroup = (id) => async (dispatch) => {
   let options = {};
   options.method = "DELETE";
@@ -73,6 +246,15 @@ export const getGroupVenues = (id) => async (dispatch) => {
     return venues;
   }
 };
+export const getVenueById = (id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/venues/${id}`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const venue = await response.json();
+    return venue;
+  }
+};
 
 export const getUserGroups = () => async (dispatch) => {
   const response = await window.fetch(`/apiv1/groups`, {
@@ -81,6 +263,27 @@ export const getUserGroups = () => async (dispatch) => {
   if (response.ok) {
     const groups = await response.json();
     return groups;
+  }
+};
+export const addEventImage = (imageData, id) => async (dispatch) => {
+  let options = {};
+  options.method = "POST";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(imageData);
+  console.log("imageData", options.body);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/events/${id}/image`, options);
+  if (response.ok) {
+    const image = await response.json();
+    return image;
   }
 };
 
@@ -125,6 +328,15 @@ export const addVenue = (venueData, id) => async (dispatch) => {
     return venue;
   }
 };
+export const getEventById = (id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/events/${id}`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const event = await response.json();
+    return event;
+  }
+};
 
 export const getGroupById = (id) => async (dispatch) => {
   const response = await window.fetch(`/apiv1/groups/${id}`, {
@@ -142,7 +354,6 @@ export const getAllGroups = () => async (dispatch) => {
   });
   if (response.ok) {
     const groups = await response.json();
-    console.log(groups);
     dispatch(setResults(groups));
   }
 };
@@ -211,11 +422,9 @@ export const getAllGroups = () => async (dispatch) => {
 // };
 
 const searchReducer = (state = initialState, action) => {
-  console.log("AAAAAAAAAAAAAAAA");
   switch (action.type) {
     case SETRESULTS:
       state.results = action.payload;
-      console.log(state.results, "asdas");
       return state;
     case SETLOCATION:
       state.location = action.payload;
