@@ -19,7 +19,7 @@ async function authMiddle(req, res, next) {
   const authHeader = req?.cookies?.authorized || null;
   const token = authHeader;
   if (token == null) {
-    res.statusCode = 401;
+    // res.statusCode = 401;
     return res.json({
       message: "Authentication required",
       statusCode: 401,
@@ -33,7 +33,7 @@ async function authMiddle(req, res, next) {
     req.userId = rest.id;
     req.userObject = user;
   } catch {
-    res.statusCode = 401;
+    // res.statusCode = 401;
     return res.json({
       message: "Authentication required",
       statusCode: 401,
@@ -713,13 +713,13 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM "Groups" WHERE "id"=${req.params.group_id})`
+            `(SELECT "grup"."organizerId" FROM "Groups" AS "grup" WHERE "grup"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "status" FROM 'UserGroups' WHERE "groupId"=${req.params.group_id} AND "userId"=${req.userObject.id})`
+            `(SELECT "ugup"."status" FROM "UserGroups" AS "ugup" WHERE "ugup"."groupId"=${req.params.group_id} AND "ugup"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
@@ -801,13 +801,13 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM 'Groups' WHERE "id"=${req.params.group_id})`
+            `(SELECT "organizerId" FROM "Groups" WHERE "Groups"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "status" FROM 'UserGroups' WHERE "groupId"=${req.params.group_id} AND "userId"=${req.userObject.id})`
+            `(SELECT "status" FROM "UserGroups" WHERE "UserGroups"."groupId"=${req.params.group_id} AND "UserGroups"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],

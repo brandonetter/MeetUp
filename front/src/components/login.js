@@ -119,6 +119,7 @@ function Login() {
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
     registerValidate();
+    let Err;
     if (!validationErrors.length)
       return dispatch(
         sessionActions.sessionRegister({
@@ -128,25 +129,32 @@ function Login() {
           lastname: lname,
           username: uname,
         })
-      ).catch(async (res) => {
-        const data = await res.json();
-        if (data && data.errors) setValidationErrors([...data.errors]);
-      });
+      )
+        .catch(async (res) => {
+          const data = await res.json();
+          Err = data;
+          if (data && data.errors) setValidationErrors([...data.errors]);
+        })
+        .finally(() => {
+          if (!Err) setRedir(<Redirect to="/dashboard" />);
+        });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
     validate();
+    let Err;
     if (!validationErrors.length)
       return dispatch(sessionActions.sessionLogin({ credential, password }))
         .catch(async (res) => {
           const data = await res?.json();
+          Err = data;
           if (data?.message === "Authentication required")
             setValidationErrors(["Invalid credentials"]);
           if (data && data.errors) setValidationErrors([...data.errors]);
         })
         .finally(() => {
           console.log("finally");
-          setRedir(<Redirect to="/dashboard" />);
+          if (!Err) setRedir(<Redirect to="/dashboard" />);
         });
   };
   const menu = (

@@ -65,6 +65,7 @@ function Header() {
     async function getUserGroups() {
       let userGroups = await dispatch(searchActions.getUserGroups());
       //filter groups where the user ID doesn't match the organizer ID
+      if (!userGroups.filter) return;
       userGroups = userGroups.filter(
         (group) => group.organizerId === sessionUser?.id
       );

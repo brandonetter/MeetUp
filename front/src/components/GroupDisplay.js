@@ -30,7 +30,8 @@ function GroupDisplay() {
         };
       });
       //sort tempRest by distance
-      let tt = [...tempRest];
+      let tt;
+      if (tempRest?.length) tt = [...tempRest];
       setSortedResults(tt);
     }
     sortedRes();
@@ -39,6 +40,7 @@ function GroupDisplay() {
   useEffect(() => {
     async function waitSort() {
       let res = [];
+      if (!sortedResults?.length) return;
       for await (let r of sortedResults) {
         if (r.distance) {
           if (r.distance.includes(",")) {
