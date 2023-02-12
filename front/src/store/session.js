@@ -17,13 +17,16 @@ export const sessionLogout = () => async (dispatch) => {
   dispatch(setSession({ user: null }));
 };
 export const sessionRestore = () => async (dispatch) => {
-  const response = await window.fetch(`/apiv1/auth`, {
-    method: "GET",
-  });
-  if (response.ok) {
-    const user = await response.json();
-    dispatch(setSession({ user: user }));
-  }
+  try {
+    const response = await window.fetch(`/apiv1/auth`, {
+      method: "GET",
+    });
+    if (response.status >= 400) return;
+    if (response.ok) {
+      const user = await response.json();
+      dispatch(setSession({ user: user }));
+    }
+  } catch (e) {}
 };
 export const addGroup = (group) => async (dispatch) => {
   let options = {};
@@ -35,7 +38,7 @@ export const addGroup = (group) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`apiv1/groups`, options);
-  if (response.status >= 400) throw response;
+  if (response.status >= 400) return;
   if (response.ok) {
     const res = await response.json();
     return res;
@@ -56,7 +59,7 @@ export const uploadImage = (image) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`/apiv1/uploadImage`, options);
-  if (response.status >= 400) throw response;
+  if (response.status >= 400) return;
   if (response.ok) {
     const res = await response.json();
     return res;
@@ -79,7 +82,7 @@ export const sessionRegister = (userData) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`apiv1/auth/new`, options);
-  if (response.status >= 400) throw response;
+  if (response.status >= 400) return;
   if (response.ok) {
     const user = await response.json();
     let login = await dispatch(
@@ -107,7 +110,7 @@ export const sessionLogin = (userData) => async (dispatch) => {
   }
   const response = await window.fetch(`apiv1/auth`, options);
 
-  if (response.status >= 400) throw response;
+  if (response.status >= 400) return;
   if (response.ok) {
     const user = await response.json();
     dispatch(setSession(user));
