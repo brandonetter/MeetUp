@@ -30,6 +30,14 @@ Backend: https://github.com/brandonetter/MeetUp/tree/main/server
 
 ### Screenshots:
 
+![landing](./DemoImages/landing.png)
+
+![demo1](./DemoImages/mapDemo.gif)
+
+![demo2](./DemoImages/eventPopupDemo.gif)
+
+![demo3](./DemoImages/distanceDemo.gif)
+
 ### Build And Run Instructions:
 
 1.  git clone this repo
@@ -71,5 +79,12 @@ I really learned a lot about project management with this one, as it was my bigg
 
 I picked up a few programming patterns I'd like to continue using in future projects.
 Like using **React's** map along-side `Object.keys`To iterate through Objects containing Arrays with in-line JSX
+![inline](./DemoImages/keysMap.png)
 
 Or like integrating data validation inside of Sequelize Models to make a clean and self-contained system
+
+![valid1](./DemoImages/validate1.png)
+
+...
+
+![valid2](./DemoImages/validate2.png)
