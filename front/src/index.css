@@ -12,6 +12,24 @@ body {
   overflow: hidden;
   pointer-events: none;
 }
+/* make scrollbar invisible */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+  background: #ff0000;
+}
+/* Optional: show position indicator only when dragging */
+::-webkit-scrollbar-thumb:window-inactive {
+  background: transparent;
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-track {
+  background: #ff0000;
+}
+
 .redBlob {
   position: absolute;
   opacity: 0.5;

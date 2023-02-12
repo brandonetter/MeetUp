@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
 import "./myEvents.css";
+import loadingImage from "../images/loading.svg";
 function MyEvents() {
   const [groups, setGroups] = useState([]);
   const [groupEvents, setGroupEvents] = useState([]);
@@ -69,6 +70,10 @@ function MyEvents() {
     <div>
       {redir}
       <h3>Your Events</h3>
+      {groupEvents.length === 0 && (
+        <img className="loadingImage" src={loadingImage} alt="loading" />
+      )}
+
       <ul>{renderEvents()}</ul>
     </div>
   );

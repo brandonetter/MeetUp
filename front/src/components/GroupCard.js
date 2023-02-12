@@ -92,11 +92,13 @@ function GroupCard({ img, group, location }) {
         <div className="groupCardHeader">
           <div className="groupCardTitle">{group?.name}</div>
           <div className="groupCardLocation">
-            {group?.city},{group?.state}
+            {group?.city}, {group?.state}
           </div>
 
           <div className="groupCardDescription">{group?.about}</div>
-          <div className="groupCardMembers">{group?.numMembers} Members</div>
+          <div className="groupCardMembers">
+            {group?.numMembers} Member{group?.numMembers > 1 && "s"}
+          </div>
           {!expand && <div className="distance">{group?.distance + " mi"}</div>}
         </div>
         {expand ? (

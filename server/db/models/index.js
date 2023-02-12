@@ -59,6 +59,10 @@ db.Tools = {
     });
     let ob = {};
     keys.forEach((val) => {
+      if (body[val] === 0 || body[val] === false) {
+        ob[val] = body[val];
+        return;
+      }
       ob[val] = body[val] || null;
     });
     return ob;

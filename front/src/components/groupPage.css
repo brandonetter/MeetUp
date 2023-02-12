@@ -226,3 +226,19 @@
 .groupPageAdminPanel button:hover {
   background-color: rgb(97, 185, 223);
 }
+.loadingImage {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -436,6 +436,7 @@ router.get("/events/:event_id", softAuthMiddle, async (req, res) => {
         "type",
         "venueId",
         "capacity",
+        "description",
         [
           Sequelize.literal(
             `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Event"."groupId")`
@@ -507,9 +508,71 @@ router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
+router.delete("/events/:event_id", authMiddle, async (req, res) => {
+  try {
+    let event = await Event.findOne({
+      where: {
+        id: req.params.event_id,
+      },
+    });
+    if (!event) {
+      res.statusCode = 404;
+      throw {
+        message: "Event couldn't be found",
+        statusCode: 404,
+      };
+    }
+    //find group organizer
+    let group = await Group.findOne({
+      where: {
+        id: event.groupId,
+      },
+    });
+    if (!group) {
+      res.statusCode = 404;
+      throw {
+        message: "Group couldn't be found",
+        statusCode: 404,
+      };
+    }
+
+    if (group.organizerId != req.userObject.id) {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the organizer of this Event's Group",
+        statusCode: 401,
+      };
+    }
+    await event.destroy();
+    res.json({
+      message: "Successfully deleted",
+      statusCode: 200,
+    });
+  } catch (e) {
+    res.json(e);
+  }
+});
+router.get("/events/:event_id/images", softAuthMiddle, async (req, res) => {
+  try {
+    let event = await Event.findOne({
+      where: {
+        id: req.params.event_id,
+      },
+    });
+    if (!event) {
+      res.statusCode = 404;
+      throw { message: "Event couldn't be found" };
+    }
+    let images = await event.getImages();
+    res.json(images);
+  } catch (e) {
+    res.json(e);
+  }
+});
 
 router.post("/events/:event_id/image", authMiddle, async (req, res) => {
   try {
+    console.log(req.body);
     let ob = t.tidy(Image, req.body);
     ob.userId = req.userId;
     ob.eventId = req.params.event_id;
@@ -522,6 +585,7 @@ router.post("/events/:event_id/image", authMiddle, async (req, res) => {
       res.statusCode = 404;
       throw { message: "Event couldn't be found" };
     }
+    console.log(ob);
     let result = await Event.addNewImage(ob);
 
     res.json(result);

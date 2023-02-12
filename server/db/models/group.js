@@ -125,6 +125,7 @@ module.exports = (sequelize, DataTypes) => {
           "type",
           "venueId",
           "capacity",
+          "description",
           [
             sequelize.literal(
               `(SELECT "g"."organizerId" from "Groups" as "g" where "g"."id"="Event"."groupId")`

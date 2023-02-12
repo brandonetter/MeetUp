@@ -1,0 +1,46 @@
+.ImageCar {
+  display: grid;
+  grid-template-columns: 1fr 6fr 1fr;
+  grid-template-rows: 1fr;
+  width: 600px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  user-select: none;
+}
+.imageCarImage {
+  width: 400px;
+  height: 400px;
+}
+.currentImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.253);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.previousImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.253);
+  border-radius: 5px 0 0 5px;
+  cursor: pointer;
+}
+.nextImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.253);
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
