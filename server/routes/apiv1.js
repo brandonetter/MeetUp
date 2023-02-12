@@ -713,13 +713,13 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "Groups"."organizerId" FROM "Groups" WHERE "Groups"."id"=${req.params.group_id})`
+            `(SELECT "grup"."organizerId" FROM "Groups" AS "grup" WHERE "grup"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "UserGroups"."status" FROM 'UserGroups' WHERE "UserGroups"."groupId"=${req.params.group_id} AND "UserGroups"."userId"=${req.userObject.id})`
+            `(SELECT "ugup"."status" FROM 'UserGroups' AS "ugup" WHERE "ugup"."groupId"=${req.params.group_id} AND "ugup"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
