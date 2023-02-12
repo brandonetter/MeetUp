@@ -24,6 +24,7 @@ export const sessionRestore = () => async (dispatch) => {
     if (response.status >= 400) return;
     if (response.ok) {
       const user = await response.json();
+      if (user.statusCode === 401) return;
       dispatch(setSession({ user: user }));
     }
   } catch (e) {}
