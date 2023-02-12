@@ -801,13 +801,13 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM 'Groups' WHERE "id"=${req.params.group_id})`
+            `(SELECT "organizerId" FROM 'Groups' WHERE "Groups"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "status" FROM 'UserGroups' WHERE "groupId"=${req.params.group_id} AND "userId"=${req.userObject.id})`
+            `(SELECT "status" FROM 'UserGroups' WHERE "UserGroups"."groupId"=${req.params.group_id} AND "UserGroups"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
