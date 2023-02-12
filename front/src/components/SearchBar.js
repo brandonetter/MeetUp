@@ -6,9 +6,10 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import * as searchActions from "../store/search";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, useJSApiLoader } from "@react-google-maps/api";
-
+import { Redirect } from "react-router-dom";
 library.add(faMagnifyingGlass);
 function SearchBar({ type }) {
+  const [redir, setRedir] = useState(null);
   const search = useSelector((state) => state.search);
   const dispatch = useDispatch();
   const [location, setLocation] = useState("Location");
@@ -65,13 +66,20 @@ function SearchBar({ type }) {
   }, []);
   const setLoc = (e) => {
     e.preventDefault();
+
     // setLocation(document.getElementsByClassName("sb2")[0].value);
+    console.log("setloc");
+    setRedir(<Redirect to={`/dashboard`} />);
+    setTimeout(() => {
+      setRedir(null);
+    }, 100);
     dispatch(
       searchActions.setLocation(document.getElementsByClassName("sb2")[0].value)
     );
   };
   return (
     <div className="singleBar">
+      {redir}
       <form onSubmit={setLoc} className="sbForm">
         <input className="sb1" placeholder={`Search ${type}`}></input>
         <input className="sb2" placeholder={location}></input>
