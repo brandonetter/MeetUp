@@ -719,7 +719,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         ],
         [
           Sequelize.literal(
-            `(SELECT "ugup"."status" FROM 'UserGroups' AS "ugup" WHERE "ugup"."groupId"=${req.params.group_id} AND "ugup"."userId"=${req.userObject.id})`
+            `(SELECT "ugup"."status" FROM "UserGroups" AS "ugup" WHERE "ugup"."groupId"=${req.params.group_id} AND "ugup"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
@@ -801,13 +801,13 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM 'Groups' WHERE "Groups"."id"=${req.params.group_id})`
+            `(SELECT "organizerId" FROM "Groups" WHERE "Groups"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
         [
           Sequelize.literal(
-            `(SELECT "status" FROM 'UserGroups' WHERE "UserGroups"."groupId"=${req.params.group_id} AND "UserGroups"."userId"=${req.userObject.id})`
+            `(SELECT "status" FROM "UserGroups" WHERE "UserGroups"."groupId"=${req.params.group_id} AND "UserGroups"."userId"=${req.userObject.id})`
           ),
           "ourStatus",
         ],
