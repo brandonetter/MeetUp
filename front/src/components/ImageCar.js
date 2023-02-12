@@ -22,21 +22,36 @@ function ImageCar({ eventImages }) {
   };
 
   return (
-    <div className="ImageCar">
-      <div className="previousImage" onClick={previousImage}>
-        <FontAwesomeIcon icon="arrow-left" />
-      </div>
-      <div className="currentImage">
-        <img
+    <>
+      {eventImages.map((image) => (
+        <div
+          style={{ display: "none" }}
           className="imageCarImage"
-          src={`../imageBin/${eventImages[currentImage].url}`}
-          alt="eventImage"
-        />
+          key={image.id}
+        >
+          <img
+            src={`../imageBin/${image.url}`}
+            style={{ display: "none" }}
+            alt="eventImage"
+          />
+        </div>
+      ))}
+      <div className="ImageCar">
+        <div className="previousImage" onClick={previousImage}>
+          <FontAwesomeIcon icon="arrow-left" />
+        </div>
+        <div className="currentImage">
+          <img
+            className="imageCarImage"
+            src={`../imageBin/${eventImages[currentImage].url}`}
+            alt="eventImage"
+          />
+        </div>
+        <div className="nextImage" onClick={nextImage}>
+          <FontAwesomeIcon icon="arrow-right" />
+        </div>
       </div>
-      <div className="nextImage" onClick={nextImage}>
-        <FontAwesomeIcon icon="arrow-right" />
-      </div>
-    </div>
+    </>
   );
 }
 export default ImageCar;

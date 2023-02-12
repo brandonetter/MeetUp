@@ -8,6 +8,7 @@ import {
   faLocationArrow,
   faPeopleArrows,
   faUser,
+  faInfoCircle,
   faMoneyBillWave,
 } from "@fortawesome/free-solid-svg-icons";
 import * as searchActions from "../store/search";
@@ -21,7 +22,8 @@ library.add(
   faLocationArrow,
   faPeopleArrows,
   faUser,
-  faMoneyBillWave
+  faMoneyBillWave,
+  faInfoCircle
 );
 function EventPage() {
   const [redir, setRedir] = useState(null);
@@ -32,15 +34,22 @@ function EventPage() {
   const [eventImages, setEventImages] = useState([]);
   const [preview, setPreview] = useState(null);
   const [attendees, setAttendees] = useState([]);
+  const [ourStatus, setOurStatus] = useState(null);
   const sessionUser = useSelector((state) => state.session.user);
   const dispatch = useDispatch();
   const navigate = useHistory();
   const params = useParams();
   const eventId = params.id;
+  const isAdminToolTip = (opacity) => {
+    let div = document.getElementById("isAdminToolTip");
+    div.style.opacity = opacity;
+  };
+
   useEffect(() => {
     async function getGroup() {
       let event = await dispatch(searchActions.getEventById(eventId));
       console.log(event);
+      setOurStatus(event.ourStatus);
       let venue = await dispatch(searchActions.getVenueById(event.venueId));
       let eventImages = await dispatch(searchActions.getEventImages(eventId));
       for (let im of eventImages) {
@@ -120,7 +129,7 @@ function EventPage() {
         return (
           <div className="groupPageAbout">
             <div className="groupPageAboutTitle">
-              <h4>About This Event</h4>
+              <h1>About This Event</h1>
             </div>
             <div className="groupPageMenuContent">{event?.description}</div>
           </div>
@@ -129,7 +138,7 @@ function EventPage() {
         return (
           <div className="groupPageAbout">
             <div className="groupPageMenuContent">
-              <h4>Attendees</h4>
+              <h1>Attendees</h1>
             </div>
 
             <div>
@@ -304,7 +313,25 @@ function EventPage() {
               </div>
             )}
           </div>
-          <div className="groupPageMenuButton Join">Join Event</div>
+          <div className="isAdminToolTip" id="isAdminToolTip">
+            <FontAwesomeIcon icon={faInfoCircle}></FontAwesomeIcon>
+            <div className="isAdminToolTipText">
+              You are the organizer of this event, You're already Joined!
+            </div>
+          </div>
+          {isAdmin ? (
+            <div
+              className="groupPageMenuButton JoinDisabled"
+              onMouseOver={() => isAdminToolTip("1")}
+              onMouseOut={() => isAdminToolTip("0")}
+            >
+              Join Event
+            </div>
+          ) : ourStatus === "member" ? (
+            <div className="groupPageMenuButton Leave">Leave Event</div>
+          ) : (
+            <div className="groupPageMenuButton Join">Join Event</div>
+          )}
         </div>
         <div className="groupPageMenuContent">{renderPage()}</div>
       </div>

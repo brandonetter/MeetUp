@@ -22,13 +22,7 @@ body {
   background: #ff0000;
 }
 /* Optional: show position indicator only when dragging */
-::-webkit-scrollbar-thumb:window-inactive {
-  background: transparent;
-}
 /* Optional: show position indicator in red */
-::-webkit-scrollbar-track {
-  background: #ff0000;
-}
 
 .redBlob {
   position: absolute;

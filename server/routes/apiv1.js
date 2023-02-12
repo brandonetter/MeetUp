@@ -649,7 +649,10 @@ router.get("/groups/:group_id/members", softAuthMiddle, (req, res) => {
           delete user.UserGroup.dataValues;
           delete user.dataValues.username;
           delete user.dataValues.email;
-          if (group.organizerId != req.userId) {
+          if (
+            group.organizerId != req.userId &&
+            req?.userId != user.dataValues.id
+          ) {
             if (user.dataValues.Membership.status == "pending") {
               delete users[i];
             }
@@ -823,7 +826,7 @@ router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
             id: userGroup.groupId,
           },
         });
-        grup.numMembers -= 1;
+        if (userGroup.status !== "pending") grup.numMembers -= 1;
         await grup.save();
         await userGroup.destroy();
         res.json({

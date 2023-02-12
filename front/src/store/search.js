@@ -24,6 +24,83 @@ export const setLocation = (location) => ({
 const clearState = () => ({
   type: CLEAR,
 });
+
+export const joinGroup = (group_id) => async (dispatch) => {
+  let options = {};
+  options.method = "GET";
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(`/apiv1/groups/${group_id}/join`);
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const removePending = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  options.body = JSON.stringify({ memberId: user_id });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const confirmPending = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "PUT";
+  options.body = JSON.stringify({ memberId: user_id, status: "member" });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
+export const leaveGroup = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  options.body = JSON.stringify({ memberId: user_id });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
 export const getEventImages = (event_id) => async (dispatch) => {
   const response = await window.fetch(`/apiv1/events/${event_id}/images`, {
     method: "GET",
@@ -31,6 +108,15 @@ export const getEventImages = (event_id) => async (dispatch) => {
   if (response.ok) {
     const images = await response.json();
     return images;
+  }
+};
+export const getMembersByGroupId = (group_id) => async (dispatch) => {
+  const response = await window.fetch(`/apiv1/groups/${group_id}/members`, {
+    method: "GET",
+  });
+  if (response.ok) {
+    const members = await response.json();
+    return members;
   }
 };
 
