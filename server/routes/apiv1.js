@@ -713,7 +713,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
         "status",
         [
           Sequelize.literal(
-            `(SELECT "organizerId" FROM "Groups" WHERE "Group"."id"=${req.params.group_id})`
+            `(SELECT "organizerId" FROM "Groups" WHERE "Groups"."id"=${req.params.group_id})`
           ),
           "organizerId",
         ],
