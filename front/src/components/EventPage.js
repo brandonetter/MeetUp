@@ -3,6 +3,7 @@ import ImageCar from "./ImageCar";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MemberCard from "./MemberCard";
 import {
   faArrowLeft,
   faLocationArrow,
@@ -146,12 +147,10 @@ function EventPage() {
               <h1>Attendees</h1>
             </div>
 
-            <div>
-              {attendees.map((attendee) => (
-                <div className="groupPageAttendee" key={attendee.id}>
-                  <div className="eventPageAttendeeName">
-                    {attendee.firstName + " " + attendee.lastName}
-                  </div>
+            <div className="memberCardHolder">
+              {attendees.map((m) => (
+                <div key={m.id}>
+                  <MemberCard member={m} />
                 </div>
               ))}
             </div>

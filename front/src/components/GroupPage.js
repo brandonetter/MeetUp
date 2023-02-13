@@ -7,6 +7,7 @@ import "./groupPage.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import MemberCard from "./MemberCard";
 import {
   faLocationArrow,
   faPeopleArrows,
@@ -225,16 +226,13 @@ function GroupPage() {
         return (
           <div className="groupPageAdminPanel">
             <h1>Members</h1>
-            {members.map((m) => (
-              <div key={m.id}>
-                <div>
-                  {m.firstname} {m.lastname}{" "}
-                  {m.Membership.status === "pending" && (
-                    <span className="pending">Pending</span>
-                  )}
+            <div className="memberCardHolder">
+              {members.map((m) => (
+                <div key={m.id}>
+                  <MemberCard member={m} />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         );
       case "ManageMembers":

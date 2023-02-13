@@ -4,8 +4,8 @@
     "dialect": "sqlite"
   },
   "test": {
-    "use_env_variable": "postgres://meetup_c0yr_user:nCZ1alrowXOGYGwzrZ7CYjjPd1mfZPMm@dpg-cfkjuhhmbjsn9ecr12k0-a/meetup_c0yr",
-    "url": "postgres://meetup_c0yr_user:nCZ1alrowXOGYGwzrZ7CYjjPd1mfZPMm@dpg-cfkjuhhmbjsn9ecr12k0-a/meetup_c0yr",
+    "use_env_variable": "postgres://meetup_cmeh_user:Qnwr4L3C8kpWentLhNlfSIqeXKjLmh9c@dpg-cfkr6lla49903fhe4leg-a/meetup_cmeh",
+    "url": "postgres://meetup_cmeh_user:Qnwr4L3C8kpWentLhNlfSIqeXKjLmh9c@dpg-cfkr6lla49903fhe4leg-a/meetup_cmeh",
 
     "dialect": "postgres"
   },
