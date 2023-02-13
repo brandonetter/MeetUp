@@ -136,7 +136,7 @@
 .groupCardDescription {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 7;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   word-break: break-word;
   margin-bottom: 20px;

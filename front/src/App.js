@@ -13,6 +13,7 @@ import Landing from "./components/Landing";
 import GroupPage from "./components/GroupPage";
 import EventPage from "./components/EventPage";
 import Dashboard from "./components/Dashboard";
+import About from "./components/About";
 import { useSelector } from "react-redux";
 function App() {
   const sessionUser = useSelector((state) => state.session.user);
@@ -31,6 +32,7 @@ function App() {
       <Switch>
         <Route path="/" exact>
           <Landing />
+          <About />
         </Route>
         <Route path="/dashboard">
           <Dashboard></Dashboard>
