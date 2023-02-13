@@ -23,7 +23,7 @@ function MyEvents() {
         const response = await dispatch(
           searchActions.getGroupEvents(groups[i].id)
         );
-        groupEvents = [...groupEvents, ...response.Events];
+        if (response.Events) groupEvents = [...groupEvents, ...response.Events];
       }
       console.log(groupEvents);
       setGroupEvents(groupEvents);

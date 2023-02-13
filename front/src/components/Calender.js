@@ -76,7 +76,7 @@ function Calender({ small = false, selectable = false, sendDate = null }) {
         let groupEvents = await dispatch(
           searchActions.getGroupEvents(response[i].id)
         );
-        event = [...event, ...groupEvents.Events];
+        if (groupEvents.Events) event = [...event, ...groupEvents.Events];
       }
       setEvents(event);
     }

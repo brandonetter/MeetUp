@@ -152,7 +152,7 @@ function Login() {
         setValidationErrors(["Invalid credentials"]);
       } else if (data && data.errors) setValidationErrors([...data.errors]);
 
-      if (data.user.id) setRedir(<Redirect to="/dashboard" />);
+      if (data?.user?.id) setRedir(<Redirect to="/dashboard" />);
     }
   };
   const menu = (
