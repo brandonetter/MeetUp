@@ -26,21 +26,15 @@ function Landing() {
       <div className="imageHolder">
         <div>
           <img src={one}></img>
-          <h3>
-            Explore <FontAwesomeIcon icon={faArrowRight}></FontAwesomeIcon>
-          </h3>
+          <h3>Explore</h3>
         </div>
         <div>
           <img src={two}></img>
-          <h3>
-            Meet <FontAwesomeIcon icon={faArrowRight}></FontAwesomeIcon>
-          </h3>
+          <h3>Meet</h3>
         </div>
         <div>
           <img src={three}></img>
-          <h3>
-            Party <FontAwesomeIcon icon={faArrowRight}></FontAwesomeIcon>
-          </h3>
+          <h3>Party</h3>
         </div>
       </div>
     </div>

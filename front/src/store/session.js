@@ -38,7 +38,7 @@ export const addGroup = (group) => async (dispatch) => {
     options.headers["Content-Type"] = "application/json";
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
-  const response = await window.fetch(`apiv1/groups`, options);
+  const response = await window.fetch(`/apiv1/groups`, options);
   if (response.status >= 400) return;
   if (response.ok) {
     const res = await response.json();

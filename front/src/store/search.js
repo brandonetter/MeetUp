@@ -54,7 +54,7 @@ export const removePending = (group_id, user_id) => async (dispatch) => {
     `/apiv1/groups/${group_id}/members`,
     options
   );
-  if (response.status >= 400) throw response;
+  if (response.status > 400) throw response;
   if (response.ok) {
     const res = await response.json();
     return res;

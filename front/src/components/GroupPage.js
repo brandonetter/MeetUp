@@ -15,6 +15,8 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import GMap from "./GMap";
+import ImageCar from "./ImageCar";
+import demoImage from "../images/placeholder.png";
 
 library.add(faLocationArrow, faPeopleArrows, faUser, faBackward, faInfoCircle);
 function GroupPage() {
@@ -25,7 +27,7 @@ function GroupPage() {
     setMarkerPos([e.latLng.lat(), e.latLng.lng()]);
   };
   const sessionUser = useSelector((state) => state.session.user);
-
+  const [groupEvents, setGroupEvents] = useState([]);
   const [current, setCurrent] = useState("About");
   const [group, setGroup] = useState([]);
   const [preview, setPreview] = useState();
@@ -39,6 +41,7 @@ function GroupPage() {
   const [address, setAddress] = useState("");
   const [lat, setLat] = useState(40);
   const [long, setLong] = useState(-100);
+  const [groupImages, setGroupImages] = useState([]);
   const [ourStatus, setOurStatus] = useState("");
   const dispatch = useDispatch();
   const params = useParams();
@@ -126,9 +129,15 @@ function GroupPage() {
     }
   }
   useEffect(() => {
+    async function getGroupEvents() {
+      let events = await dispatch(searchActions.getGroupEvents(groupId));
+      setGroupEvents(events.Events);
+    }
+    getGroupEvents();
     async function getGroup() {
       let group = await dispatch(searchActions.getGroupById(groupId));
       setGroup(group);
+      setGroupImages(group.GroupImages);
       setOrganizer(group.Organizer);
       let membersList = await dispatch(
         searchActions.getMembersByGroupId(groupId)
@@ -145,12 +154,16 @@ function GroupPage() {
       setPendingMembers(pendingMembers);
 
       setMembers(membersList.Users);
+      let foundPreview = false;
       for (let im of group.GroupImages) {
         if (im.preview) {
+          foundPreview = true;
           setPreview("/imagebin/" + im.url);
         }
       }
-
+      if (!foundPreview) {
+        setPreview(demoImage);
+      }
       if (sessionUser?.id === group?.organizerId && sessionUser.id) {
         setIsAdmin(true);
       }
@@ -248,13 +261,26 @@ function GroupPage() {
       case "Events":
         return (
           <div className="groupPageAdminPanel">
-            <div>Events</div>
+            <h1>Events</h1>
+            {redir}
+            {groupEvents.map((e) => (
+              <div
+                className="myEventListItem"
+                key={e.id}
+                onClick={() =>
+                  setRedir(<Redirect to={`/events/${e.id}`}></Redirect>)
+                }
+              >
+                <h3>{e.name}</h3>
+              </div>
+            ))}
           </div>
         );
       case "Photos":
         return (
           <div className="groupPageAdminPanel">
             <div>Photos</div>
+            <ImageCar eventImages={groupImages} />
           </div>
         );
 

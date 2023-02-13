@@ -17,6 +17,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import loadingImage from "../images/loading.svg";
+import placeHolderImage from "../images/placeholder.png";
 library.add(
   faArrowLeft,
   faLocationArrow,
@@ -52,12 +53,16 @@ function EventPage() {
       setOurStatus(event.ourStatus);
       let venue = await dispatch(searchActions.getVenueById(event.venueId));
       let eventImages = await dispatch(searchActions.getEventImages(eventId));
+      let hasPreview = false;
       for (let im of eventImages) {
         if (im.preview) {
+          hasPreview = true;
           setPreview("/imagebin/" + im.url);
         }
       }
-
+      if (!hasPreview) {
+        setPreview(placeHolderImage);
+      }
       setEventImages(eventImages);
       console.log(eventImages);
       setVenue(venue);

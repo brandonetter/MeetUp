@@ -20,7 +20,7 @@ function ImageCar({ eventImages }) {
       setCurrentImage(currentImage + 1);
     }
   };
-
+  if (eventImages.length === 0) return <b>No Images</b>;
   return (
     <>
       {eventImages.map((image) => (
@@ -43,7 +43,7 @@ function ImageCar({ eventImages }) {
         <div className="currentImage">
           <img
             className="imageCarImage"
-            src={`../imageBin/${eventImages[currentImage].url}`}
+            src={`../imageBin/${eventImages[currentImage]?.url}`}
             alt="eventImage"
           />
         </div>

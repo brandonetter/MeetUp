@@ -36,7 +36,6 @@ h3 {
 }
 .imageHolder img:hover {
   filter: grayscale(0%);
-  cursor: pointer;
 }
 .main h1 {
   font-size: 3rem;
