@@ -90,7 +90,6 @@ router.post("/auth", async (req, res) => {
       throw e;
     }
   } catch (e) {
-    res.statusCode = 401;
     res.json({
       message: "Authentication required",
       statusCode: 401,

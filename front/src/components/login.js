@@ -116,12 +116,12 @@ function Login() {
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     registerValidate();
     let Err;
-    if (!validationErrors.length)
-      return dispatch(
+    if (!validationErrors.length) {
+      let res = await dispatch(
         sessionActions.sessionRegister({
           email: credential,
           hash: password,
@@ -129,33 +129,31 @@ function Login() {
           lastname: lname,
           username: uname,
         })
-      )
-        .catch(async (res) => {
-          const data = await res.json();
-          Err = data;
-          if (data && data.errors) setValidationErrors([...data.errors]);
-        })
-        .finally(() => {
-          if (!Err) setRedir(<Redirect to="/dashboard" />);
-        });
+      );
+
+      const data = res;
+      console.log("data", data);
+      if (data && data.errors) setValidationErrors([...data.errors]);
+
+      if (data?.user) setRedir(<Redirect to="/dashboard" />);
+    }
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     validate();
     let Err;
-    if (!validationErrors.length)
-      return dispatch(sessionActions.sessionLogin({ credential, password }))
-        .catch(async (res) => {
-          const data = await res?.json();
-          Err = data;
-          if (data?.message === "Authentication required")
-            setValidationErrors(["Invalid credentials"]);
-          if (data && data.errors) setValidationErrors([...data.errors]);
-        })
-        .finally(() => {
-          console.log("finally");
-          if (!Err) setRedir(<Redirect to="/dashboard" />);
-        });
+    if (!validationErrors.length) {
+      let res = await dispatch(
+        sessionActions.sessionLogin({ credential, password })
+      );
+      const data = res;
+      if (data?.message === "Authentication required") {
+        console.log("Authentication required");
+        setValidationErrors(["Invalid credentials"]);
+      } else if (data && data.errors) setValidationErrors([...data.errors]);
+
+      if (data.user.id) setRedir(<Redirect to="/dashboard" />);
+    }
   };
   const menu = (
     <ul className="menuList">

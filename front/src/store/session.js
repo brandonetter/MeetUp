@@ -83,15 +83,16 @@ export const sessionRegister = (userData) => async (dispatch) => {
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
   const response = await window.fetch(`apiv1/auth/new`, options);
-  if (response.status >= 400) return;
-  if (response.ok) {
-    const user = await response.json();
-    let login = await dispatch(
-      sessionLogin({ credential: userData.email, password: userData.hash })
-    );
-    login = await login.json();
-    dispatch(setSession(login));
-  }
+
+  const user = await response.json();
+  if (user.errors) return user;
+  console.log(user);
+  let login = await dispatch(
+    sessionLogin({ credential: userData.email, password: userData.hash })
+  );
+  // login = await login.json();
+  dispatch(setSession(login));
+  return user;
 };
 export const sessionLogin = (userData) => async (dispatch) => {
   userData.email = userData.credential;
@@ -114,7 +115,8 @@ export const sessionLogin = (userData) => async (dispatch) => {
   if (response.status >= 400) return;
   if (response.ok) {
     const user = await response.json();
-    dispatch(setSession(user));
+    if (user?.user?.id) dispatch(setSession(user));
+    return user;
   }
 };
 
