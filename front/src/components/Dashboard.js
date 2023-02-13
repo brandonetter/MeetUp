@@ -11,7 +11,7 @@ function Dashboard() {
       <h1>Welcome, {user?.username}👋</h1>
       <div className="content">
         <div className="leftBar">
-          <h3 className="dashTitle">Events From Your Groups</h3>
+          <h3 className="dashTitle">Your Upcoming Events</h3>
           <Calender />
           <MyGroups />
           <MyEvents />

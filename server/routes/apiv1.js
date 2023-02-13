@@ -483,27 +483,41 @@ router.post("/groups/:group_id/events", authMiddle, async (req, res) => {
       ],
     });
     if (!group) {
-      res.statusCode = 404;
       throw { message: "Group not found" };
     }
     if (group.organizerId != req.userId)
       throw { Error: "You are not the Group Organizer" };
     if (group.dataValues.venue == null) {
-      res.statusCode = 400;
       throw { message: "Venue does not exist" };
     }
     let data = t.tidy(Event, req.body);
     data.numAttending = 1;
     data.groupId = req.params.group_id;
+    try {
+      let event = await Event.create(data);
+      let { createdAt, updatedAt, ...rest } = event.dataValues;
+      let userEvent = await UserEvent.create({
+        userId: req.userId,
+        eventId: event.id,
+        status: "member",
+      });
+      res.json(rest);
+    } catch (e) {
+      console.log(data);
+      let errors = [];
 
-    let event = await Event.create(data);
-    let { createdAt, updatedAt, ...rest } = event.dataValues;
-    let userEvent = await UserEvent.create({
-      userId: req.userId,
-      eventId: event.id,
-      status: "member",
-    });
-    res.json(rest);
+      if (data.description == null) errors.push("Description is required");
+      if (!data.name) errors.push("Name is required");
+      if (data.description?.length > 500)
+        errors.push("Description is too long");
+      if (data.name?.length > 50) errors.push("Name is too long");
+      if (data.price < 0) errors.push("Price cannot be negative");
+      if (data.capacity < 0) errors.push("Capacity cannot be negative");
+      if (data.description?.length < 5)
+        errors.push("Description Must Be Longer");
+      console.log(errors);
+      res.json(errors);
+    }
   } catch (e) {
     res.json(e);
   }

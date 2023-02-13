@@ -1,7 +1,7 @@
 import "./Header.css";
 import logo from "../images/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Calender from "./Calender";
 import {
@@ -41,6 +41,7 @@ library.add(
 function Header() {
   const stateSelect = useRef(null);
   const citySelect = useRef(null);
+  const [showMap, setShowMap] = useState(false);
   const [markerPosition, setMarkerPosition] = useState([35, -80.2]);
   const sessionUser = useSelector((state) => state.session.user);
   const [addGroupModal, setAddGroupModal] = useState(false);
@@ -52,6 +53,9 @@ function Header() {
   const [startDate, setStartDate] = useState("0/0/0");
   const [endDate, setEndDate] = useState("0/0/0");
   const location = useLocation().pathname;
+  const [eventErrors, setEventErrors] = useState([]);
+  const [redir, setRedir] = useState(false);
+  const [groupErrors, setGroupErrors] = useState([]);
   const dispatch = useDispatch();
   const toggleShowCal = () => {
     setShowCal(!showCal);
@@ -162,8 +166,20 @@ function Header() {
     formData.groupId = e?.target[0].value;
     formData.capacity = e?.target[5].value;
     formData.price = e?.target[6].value;
-    const event = dispatch(searchActions.addEvent(formData, formData.groupId));
-    setAddEventModal(false);
+    const event = await dispatch(
+      searchActions.addEvent(formData, formData.groupId)
+    );
+    if (event.id) {
+      setRedir(<Redirect to={`/events/${event.id}`} />);
+      setAddEventModal(false);
+    } else {
+      console.log(event);
+      if (event.message) {
+        setEventErrors([event.message]);
+      } else {
+        setEventErrors(event);
+      }
+    }
   };
 
   const submitGroup = async (e) => {
@@ -185,20 +201,29 @@ function Header() {
     formData.state = stateSelect.current.value;
     formData.private = "false";
     formData.city = citySelect.current.value;
-    dispatch(sessionActions.addGroup(formData));
-
-    toggleGroupModal();
+    const res = await dispatch(sessionActions.addGroup(formData));
+    console.log(res);
+    if (res.id) {
+      setRedir(<Redirect to={`/groups/${res.id}`} />);
+      toggleGroupModal();
+    } else {
+      setGroupErrors(res);
+    }
+    //toggleGroupModal();
   };
 
   const showFile = (e) => {
     setCurrentImage(URL.createObjectURL(e.target.files[0]));
   };
   const toggleGroupModal = () => {
+    setGroupErrors([]);
     window.scrollTo(0, 0);
     setScroll(addGroupModal);
     setAddGroupModal(!addGroupModal);
   };
   const toggleEventModal = () => {
+    setEventErrors([]);
+    setScroll(addEventModal);
     setAddEventModal(!addEventModal);
   };
   const setGMapPosition = (e) => {
@@ -220,10 +245,13 @@ function Header() {
       ? document.body.classList.remove("stop-scrolling")
       : document.body.classList.add("stop-scrolling");
   }
-
+  const toggleShowMap = () => {
+    setShowMap(!showMap);
+  };
   return (
     <div className={"HeaderDiv " + (location !== "/" ? "loggedIn" : "")}>
       <img src={logo} alt="logo" />
+      {redir}
       {location != "/" && <SearchBar type="Groups"></SearchBar>}
       <div className="menuHeader">
         {location != "/" && (
@@ -281,15 +309,19 @@ function Header() {
                       className="prevImage"
                     ></img>
                   )}
+                </div>
+              </div>
+              {showMap && (
+                <div className="mapModal" id="mapModal">
                   <GMap
                     markerPosition={markerPosition}
                     onClick={setGMapPosition}
                   />
                 </div>
-              </div>
+              )}
 
               <label className="headerModalLabel">Location</label>
-              <div className="small row">
+              <div className="row">
                 <select
                   name="state"
                   className="headerModalInput select"
@@ -305,6 +337,9 @@ function Header() {
                   placeholder="City"
                   ref={citySelect}
                 ></input>
+                <div className="showMapButton" onClick={toggleShowMap}>
+                  Show Map
+                </div>
               </div>
               <button
                 type="submit"
@@ -314,6 +349,13 @@ function Header() {
                 Add group
               </button>
             </form>
+            {groupErrors && (
+              <div className="groupErrors">
+                {groupErrors.map((error) => (
+                  <div>{error}</div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -421,6 +463,13 @@ function Header() {
                 Add Event
               </button>
             </form>
+            {eventErrors && (
+              <div className="groupErrors">
+                {eventErrors.map((error) => (
+                  <div>{error}</div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
