@@ -8,10 +8,12 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../../config/database.json")[env];
 const db = {};
+// dotEnv
+require("dotenv").config();
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(config.url, config);
+  sequelize = new Sequelize(process.env.URL, config);
 } else {
   config.storage = "../" + config.storage;
   sequelize = new Sequelize(
