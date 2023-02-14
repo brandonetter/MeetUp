@@ -1,5 +1,5 @@
 require("dotenv").config();
-let ob = {
+module.exports = {
   development: {
     storage: "./server/dev.db",
     dialect: "sqlite",
@@ -17,4 +17,3 @@ let ob = {
     dialect: "postgres",
   },
 };
-export default ob;
