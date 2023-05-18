@@ -9,7 +9,7 @@
     "build": "cd front && npm run build",
     "full-install": "npm run install-front && npm run build && npm run insall",
     "migratelocalpg": "env NODE_ENV=test2 npx sequelize db:migrate",
-    "insall": "npm install && npm install sequelize-cli && env NODE_ENV=test npx sequelize db:migrate",
+    "insall": "npm install && npm install sequelize-cli && env NODE_ENV=test npx sequelize db:migrate && NODE_ENV=test npx sequelize db:seed:undo:all",
     "insall2": "npm install && npm install sequelize-cli && npm install sqlite3 && env NODE_ENV=development npx sequelize db:migrate"
   },
   "dependencies": {
