@@ -229,7 +229,7 @@ function GroupPage() {
             <div className="memberCardHolder">
               {members.map((m) => (
                 <div key={m.id}>
-                  <MemberCard member={m} />
+                  <MemberCard member={m} admin={isAdmin} groupid={groupId} />
                 </div>
               ))}
             </div>

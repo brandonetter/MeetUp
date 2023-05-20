@@ -6,12 +6,12 @@ const Sequelize = require("sequelize");
 const process = require("process");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-console.log(process.env);
 const config = require(__dirname + "/../../config/database.js")[env];
 const db = {};
 // dotEnv
 
 let sequelize;
+console.log(config);
 if (config.use_env_variable) {
   sequelize = new Sequelize(config.url, config);
 } else {

@@ -40,6 +40,26 @@ export const joinGroup = (group_id) => async (dispatch) => {
     return res;
   }
 };
+export const deleteMember = (group_id, user_id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  options.body = JSON.stringify({ memberId: user_id });
+  options.headers = options.headers || {};
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  }
+  const response = await window.fetch(
+    `/apiv1/groups/${group_id}/members`,
+    options
+  );
+  if (response.status >= 400) throw response;
+  if (response.ok) {
+    const res = await response.json();
+    return res;
+  }
+};
+
 
 export const removePending = (group_id, user_id) => async (dispatch) => {
   let options = {};

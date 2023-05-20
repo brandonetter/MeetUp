@@ -1,9 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUser, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteMember } from "../store/search";
 library.add(faUser);
-function MemberCard({ member }) {
+function MemberCard({ member, admin, groupid }) {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   return (
     <div className="memberCard">
@@ -16,8 +18,10 @@ function MemberCard({ member }) {
       {member?.Membership?.status === "pending" && (
         <span className="pending">Pending</span>
       )}
-      {member?.id !== user?.id && (
-        <FontAwesomeIcon icon={faTrash} style={{ fontSize: "1.5rem" }} />
+      {admin && member?.id !== user?.id && (
+        <FontAwesomeIcon icon={faTrash} style={{ fontSize: "1.3rem" }} onClick={() => {
+          dispatch(deleteMember(groupid, member.id))
+        }} />
       )}
 
     </div>
