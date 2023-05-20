@@ -4,7 +4,7 @@ import { faUser, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 library.add(faUser);
 function MemberCard({ member }) {
-  const user = useSelector((state) => state.userReducer.user);
+  const user = useSelector((state) => state.session.user);
   return (
     <div className="memberCard">
       <FontAwesomeIcon icon={faUser} style={{ fontSize: "2rem" }} />
