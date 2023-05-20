@@ -12,7 +12,7 @@ function MemberCard({ member, admin, groupid }) {
   const user = useSelector((state) => state.session.user);
   return (
     <div className="memberCard">
-      {redirect && <Redirect to={`/groups/${groupid}`} />}
+      {redirect && <Redirect to={`/groups/${groupid}/success`} />}
       <FontAwesomeIcon icon={faUser} style={{ fontSize: "2rem" }} />
       <span className="memberCardName">
         {member.firstname || member.firstName}{" "}
