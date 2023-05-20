@@ -7,11 +7,16 @@ import { Redirect } from "react-router-dom";
 function MyGroups() {
   const [groups, setGroups] = useState([]);
   const [redir, setRedir] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     async function getGroups() {
       const response = await dispatch(searchActions.getUserGroups());
       setGroups(response);
+      setTimeout(() => {
+        setLoaded(true);
+      }, 200);
+
     }
     getGroups();
   }, []);
@@ -19,8 +24,13 @@ function MyGroups() {
     <div>
       <h3>Your Groups</h3>
       {redir}
-      {groups.length === 0 && (
+      {groups.length === 0 && !loaded(
         <img className="loadingImage" src={loadingImage} alt="loading" />
+      )}
+      {loaded && groups.length === 0 && (
+        <div className="noGroups">
+          <h3>You are not a member of any groups</h3>
+        </div>
       )}
       <ul>
         {groups.map((group) => (

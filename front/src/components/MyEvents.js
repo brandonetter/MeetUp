@@ -8,11 +8,16 @@ function MyEvents() {
   const [groups, setGroups] = useState([]);
   const [groupEvents, setGroupEvents] = useState([]);
   const [redir, setRedir] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     async function getGroups() {
       const response = await dispatch(searchActions.getUserGroups());
       setGroups(response);
+      setTimeout(() => {
+        setLoaded(true);
+      }
+        , 200);
     }
     getGroups();
   }, []);
@@ -72,6 +77,11 @@ function MyEvents() {
       <h3>Your Events</h3>
       {groupEvents.length === 0 && (
         <img className="loadingImage" src={loadingImage} alt="loading" />
+      )}
+      {groupEvents.length === 0 && loaded && (
+        <div className="noGroups">
+          <h3>No Events</h3>
+        </div>
       )}
 
       <ul>{renderEvents()}</ul>
