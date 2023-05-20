@@ -31,3 +31,7 @@
     transform: rotate(360deg);
   }
 }
+.noGroups > h3{
+  font-size: 1rem;
+  color: #646464c4;
+}

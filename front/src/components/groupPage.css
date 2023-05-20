@@ -313,3 +313,25 @@
     transform: rotate(360deg);
   }
 }
+.venue{
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  width: 300px;
+  margin-bottom:4px;
+  padding: 5px;
+}
+.controls{
+  display: flex;
+  flex-direction: row;
+  justify-self: flex-end;
+  align-items: center;
+  gap:5px;
+}
+.controls>*:hover{
+  cursor: pointer;
+  color:rgb(87, 87, 87);
+}

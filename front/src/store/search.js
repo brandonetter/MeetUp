@@ -328,6 +328,58 @@ export const updateGroup = (groupData, id) => async (dispatch) => {
   }
 };
 
+export const updateVenue = (venueData, id) => async (dispatch) => {
+  let options = {};
+  options.method = "PUT";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  options.body = JSON.stringify(venueData);
+  console.log("venueData", options.body);
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+
+
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+
+
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+
+  }
+  const response = await window.fetch(`/apiv1/venues/${id}`, options);
+  if (response.ok) {
+    const venue = await response.json();
+    return venue;
+  }
+};
+
+export const deleteVenue = (id) => async (dispatch) => {
+  let options = {};
+  options.method = "DELETE";
+  // set options.headers to an empty object if there is no headers
+  options.headers = options.headers || {};
+  // if the options.method is not 'GET', then set the "Content-Type" header to
+  // "application/json", and set the "XSRF-TOKEN" header to the value of the
+  // "XSRF-TOKEN" cookie
+
+
+  if (options.method.toUpperCase() !== "GET") {
+    options.headers["Content-Type"] =
+
+      options.headers["Content-Type"] || "application/json";
+    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+
+  }
+  const response = await window.fetch(`/apiv1/venues/${id}`, options);
+  if (response.ok) {
+    const venue = await response.json();
+    return venue;
+  }
+  return await response.json();
+};
+
 export const addVenue = (venueData, id) => async (dispatch) => {
   let options = {};
   options.method = "POST";

@@ -24,7 +24,7 @@ function MyGroups() {
     <div>
       <h3>Your Groups</h3>
       {redir}
-      {groups.length === 0 && !loaded(
+      {groups.length === 0 && loaded == false && (
         <img className="loadingImage" src={loadingImage} alt="loading" />
       )}
       {loaded && groups.length === 0 && (

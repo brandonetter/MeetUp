@@ -13,7 +13,9 @@ import {
   faPeopleArrows,
   faInfoCircle,
   faArrowLeft as faBackward,
+  faTrash,
   faUser,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import GMap from "./GMap";
 import ImageCar from "./ImageCar";
@@ -29,6 +31,7 @@ function GroupPage() {
   };
   const sessionUser = useSelector((state) => state.session.user);
   const [groupEvents, setGroupEvents] = useState([]);
+  const [groupVenues, setGetGroupVenues] = useState([]);
   const [current, setCurrent] = useState("About");
   const [group, setGroup] = useState([]);
   const [preview, setPreview] = useState();
@@ -44,6 +47,7 @@ function GroupPage() {
   const [long, setLong] = useState(-100);
   const [groupImages, setGroupImages] = useState([]);
   const [ourStatus, setOurStatus] = useState("");
+  const [updateVenue, setUpdateVenue] = useState(null);
   const dispatch = useDispatch();
   const params = useParams();
   const groupId = params.groupId;
@@ -56,6 +60,17 @@ function GroupPage() {
       history.go(0);
     }
   };
+  const deleteVenue = async (venue_id) => {
+    const response = await dispatch(searchActions.deleteVenue(venue_id));
+    if (response?.message) {
+      history.go(0);
+    }
+    console.log(response);
+    if (response.error) {
+      alert(response.error)
+    }
+  };
+
   const removePending = async (user_id) => {
     const response = await dispatch(
       searchActions.removePending(groupId, user_id)
@@ -134,6 +149,11 @@ function GroupPage() {
       let events = await dispatch(searchActions.getGroupEvents(groupId));
       setGroupEvents(events.Events);
     }
+    async function getGroupVenues() {
+      let venues = await dispatch(searchActions.getGroupVenues(groupId));
+      setGetGroupVenues(venues.Venues);
+    }
+    getGroupVenues();
     getGroupEvents();
     async function getGroup() {
       let group = await dispatch(searchActions.getGroupById(groupId));
@@ -209,6 +229,9 @@ function GroupPage() {
         groupId
       )
     );
+    if (res.id) {
+      history.go(0);
+    }
   };
   const renderPage = () => {
     switch (current) {
@@ -235,6 +258,62 @@ function GroupPage() {
             </div>
           </div>
         );
+      case "ManageVenues":
+        console.log(groupVenues);
+        if (updateVenue) {
+          return (
+            <div className="groupPageAdminPanel">
+              <h1>Update Venue</h1>
+
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                let res = await dispatch(searchActions.updateVenue({
+                  address: address,
+                  city: city,
+                  state: state,
+                  lat: lat,
+                  lng: long,
+                }, updateVenue.id))
+                if (res.id) history.go(0);
+              }}>
+                <label>Venue Name</label>
+                <GMap
+
+                  draggable
+                  markerPosition={markerPos}
+                  onClick={setGMapPosition}
+                />
+                <label>Venue Location</label>
+                <input type="text" disabled defaultValue={updateVenue.address} value={address}></input>
+                <input type="text" disabled defaultValue={updateVenue.city} value={city}></input>
+                <input type="text" disabled defaultValue={updateVenue.state} value={state}></input>
+                <input type="text" disabled defaultValue={updateVenue.lat} value={lat}></input>
+                <input type="text" disabled defaultValue={updateVenue.lng} value={long}></input>
+                <button>Update Venue</button>
+              </form>
+            </div>
+          )
+        }
+
+        return (
+          <div className="groupPageAdminPanel">
+            <h1>Manage Venues</h1>
+            {groupVenues.map((v) => (
+              <div key={v.id} className="venue">
+                <div>
+                  {v.address} {v.city} {v.state}
+                </div>
+                <div className='controls'>
+                  <FontAwesomeIcon icon={faTrash} onClick={() => deleteVenue(v.id)}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faPencil} onClick={() => {
+                    setUpdateVenue(v)
+                  }}></FontAwesomeIcon>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+
       case "ManageMembers":
         return (
           <div className="groupPageAdminPanel">
@@ -290,6 +369,7 @@ function GroupPage() {
             <button onClick={() => setCurrent("Update")}>Update Group</button>
             <button onClick={deleteGroup}>Delete Group</button>
             <button onClick={() => setCurrent("Venue")}>Add Venue</button>
+            <button onClick={() => setCurrent("ManageVenues")}>Manage Venues</button>
             <button onClick={() => setCurrent("ManageMembers")}>
               Manage Members
             </button>

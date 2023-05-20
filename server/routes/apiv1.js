@@ -79,11 +79,15 @@ router.post("/auth", async (req, res) => {
     let user = await User.scope("validation").findOne({
       where: { email: req.body.email },
     });
+    console.log(user);
     if (user.validPassword(req.body.password)) {
+      console.log('here')
+      console.log(user.generateToken())
       res.cookie("authorized", user.generateToken(), {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         path: "/", // <--- important
       });
+      console.log("ok");
       let { salt, hash, ...userD } = user.dataValues;
       res.json({ user: userD });
     } else {
@@ -340,6 +344,7 @@ router.get("/venues/:venue_id", authMiddle, async (req, res) => {
 
 router.put("/venues/:venue_id", async (req, res) => {
   // get venue by id
+  console.log(req.body);
   try {
     let venue = await Venue.findOne({
       where: {
@@ -353,15 +358,19 @@ router.put("/venues/:venue_id", async (req, res) => {
         statusCode: 404,
       };
     }
-    let { ourStatus, organizerId } = venue.dataValues;
-    if (organizerId != req.userObject.id && ourStatus != "co-host") {
+    let group = await Group.findOne({
+      where: {
+        id: venue.groupId,
+      },
+    });
+    let ourStatus = group.organizerId == req.userObject.id ? "organizer" : null;
+
+    if (ourStatus != "organizer") {
       res.statusCode = 401;
       throw {
         message: "You are not the Organizer or the co-host for this Group",
       };
     }
-    delete venue.dataValues.ourStatus;
-    delete venue.dataValues.organizerId;
     let ob = t.tidy(Venue, req.body);
 
     for (let i in ob) {
@@ -371,7 +380,9 @@ router.put("/venues/:venue_id", async (req, res) => {
     ob.groupId = venue.groupId;
     try {
       await venue.update(ob);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
     res.json(venue);
   } catch (e) {
     res.json(e);
@@ -789,7 +800,7 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
       });
       if (oldStatus === "pending") group.numMembers += 1;
       await group.save();
-    } catch (e) {}
+    } catch (e) { }
     delete userGroup.dataValues.updatedAt;
     delete userGroup.dataValues.organizerId;
     userGroup.dataValues.memberId = userGroup.dataValues.userId;
@@ -800,6 +811,70 @@ router.put("/groups/:group_id/members", authMiddle, async (req, res) => {
     res.json(e);
   }
 });
+
+
+router.delete("/venues/:venue_id", authMiddle, async (req, res) => {
+  console.log(req.params.venue_id);
+  try {
+    let venue = await Venue.findOne({
+      where: {
+        id: req.params.venue_id,
+      },
+    });
+    if (!venue) {
+      res.statusCode = 404;
+      throw {
+        message: "Venue couldn't be found",
+        statusCode: 404,
+      };
+    }
+    // get group organizer
+    let venueGroup = await Group.findOne({
+      where: {
+        id: venue.groupId,
+      },
+    });
+    if (!venueGroup) {
+      res.statusCode = 404;
+      throw {
+        message: "Group couldn't be found",
+        statusCode: 404,
+      };
+    }
+    if (venueGroup.organizerId != req.userObject.id) {
+      res.statusCode = 401;
+      throw {
+        message: "You are not the organizer of this Venue's Group",
+        statusCode: 401,
+      };
+    }
+    // find all events with this venue
+    let events = await Event.findAll({
+      where: {
+        venueId: venue.id,
+      },
+    });
+    // error if there are events
+    if (events.length > 0) {
+      res.statusCode = 400;
+      throw {
+        error: "Cannot delete a Venue that has Events",
+        statusCode: 400,
+      };
+    }
+
+    await venue.destroy();
+    res.json({
+      message: "Successfully deleted",
+      statusCode: 200,
+    });
+  } catch (e) {
+    console.log(e);
+    res.json(e);
+  }
+});
+
+
 router.delete("/groups/:group_id/members", authMiddle, async (req, res) => {
   try {
     let userGroup = await UserGroup.findOne({
@@ -1295,8 +1370,8 @@ function paginateValidation(query) {
         ) {
           errors.push(
             key +
-              " must be greater than or equal to 0 and less than " +
-              (k == "size" ? 20 : 10)
+            " must be greater than or equal to 0 and less than " +
+            (k == "size" ? 20 : 10)
           );
         }
         break;

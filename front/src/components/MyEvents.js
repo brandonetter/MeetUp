@@ -75,7 +75,7 @@ function MyEvents() {
     <div>
       {redir}
       <h3>Your Events</h3>
-      {groupEvents.length === 0 && (
+      {groupEvents.length === 0 && !loaded && (
         <img className="loadingImage" src={loadingImage} alt="loading" />
       )}
       {groupEvents.length === 0 && loaded && (
