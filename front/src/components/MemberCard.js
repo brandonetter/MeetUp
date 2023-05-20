@@ -1,8 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 library.add(faUser);
 function MemberCard({ member }) {
+  const user = useSelector((state) => state.userReducer.user);
   return (
     <div className="memberCard">
       <FontAwesomeIcon icon={faUser} style={{ fontSize: "2rem" }} />
@@ -14,6 +16,10 @@ function MemberCard({ member }) {
       {member?.Membership?.status === "pending" && (
         <span className="pending">Pending</span>
       )}
+      {member?.id !== user?.id && (
+        <FontAwesomeIcon icon={faTrash} style={{ fontSize: "1.5rem" }} />
+      )}
+
     </div>
   );
 }
